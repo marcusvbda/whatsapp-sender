@@ -1,5 +1,5 @@
 import { createStore } from "vuex";
-import applicationModule from "./application.module.js";
+import applicationModule from "./modules/application.module.js";
 
 export default createStore({
   modules: {

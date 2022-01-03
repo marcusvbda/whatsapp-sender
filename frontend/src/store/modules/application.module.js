@@ -1,3 +1,5 @@
+import { testApiConnection } from "@/services/testService";
+
 export default {
   namespaced: true,
   state() {
@@ -10,8 +12,10 @@ export default {
   },
   mutations: {
     setCurrentAction(state, payload) {
-      console.log(payload);
       state.currentAction = payload;
     },
+  },
+  actions: {
+    testApiConnection,
   },
 };

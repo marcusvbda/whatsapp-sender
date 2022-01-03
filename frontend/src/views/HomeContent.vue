@@ -24,7 +24,16 @@ export default {
     );
     const showQrCodeComponent = computed(() => currentAction.value == "qrcode");
 
-    return { showQrCodeComponent };
+    const testApiConnection = () => {
+      return store.dispatch("application/testApiConnection");
+    };
+
+    return { showQrCodeComponent, testApiConnection };
+  },
+  created() {
+    this.testApiConnection().then((res) => {
+      console.log(res);
+    });
   },
 };
 </script>

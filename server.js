@@ -5,9 +5,9 @@ const cors = require("cors");
 app.use(cors());
 
 const bodyParser = require("body-parser");
-const port = 3070;
 const isProduction = process.env.NODE_ENV == "production";
 const appUrl = process.env.APP_URL;
+const appPort = process.env.APP_PORT;
 const path = process.cwd();
 const distPath = `${path}/frontend/dist`;
 
@@ -29,6 +29,6 @@ app.get("/api", (req, res) => {
   res.json("api is running ...");
 });
 
-app.listen(port, () => {
-  console.log(`Server listening on the ${appUrl}:${port}`);
+app.listen(appPort, () => {
+  console.log(`Server listening on the ${appUrl}:${appPort}`);
 });

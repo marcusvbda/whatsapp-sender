@@ -25,7 +25,8 @@
           </div>
           <div class="--right">
             <div class="container h-full">
-              <div class="--qrcode-skeleton" />
+              <div class="--qrcode-skeleton" v-if="qrCodeIsLoading" />
+              <img v-else :src="qrCodeImage" />
             </div>
           </div>
         </div>
@@ -38,8 +39,21 @@
   </section>
 </template>
 <script>
+import { computed } from "@vue/reactivity";
+import { useStore } from "vuex";
 import "./styles.scss";
+
 export default {
   name: "QrCodeCard",
+  setup() {
+    const store = useStore();
+    return {
+      qrCodeIsLoading: computed(
+        () => store.getters["application/getQrCodeIsLoading"]
+      ),
+      qrCodeImage: computed(() => store.getters["application/getQrCodeImage"]),
+      isLogged: computed(() => store.getters["application/getIsLogged"]),
+    };
+  },
 };
 </script>

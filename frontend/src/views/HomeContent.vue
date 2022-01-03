@@ -1,12 +1,19 @@
 <template>
-  <GradientTopbar />
-  <section class="relative top-140neg">
-    <QrCodeCard v-if="showQrCodeComponent" />
-  </section>
+  <LoadingSection v-if="currentAction == 'loading'" />
+  <div v-else>
+    <GradientTopbar />
+    <section class="relative top-140neg">
+      <QrCodeCard v-if="currentAction == 'qrcode'" />
+      <template v-if="currentAction == 'home'">
+        <h1>Is Logged</h1>
+      </template>
+    </section>
+  </div>
 </template>
 <script>
 import GradientTopbar from "@/components/gradientTopbar";
 import QrCodeCard from "@/components/qrCodeCard";
+import LoadingSection from "@/components/LoadingSection";
 import { computed } from "@vue/reactivity";
 import { useStore } from "vuex";
 
@@ -15,25 +22,17 @@ export default {
   components: {
     GradientTopbar,
     QrCodeCard,
+    LoadingSection,
   },
   setup() {
     const store = useStore();
+    store.dispatch("application/initSocket");
 
     const currentAction = computed(
       () => store.getters["application/getCurrentAction"]
     );
-    const showQrCodeComponent = computed(() => currentAction.value == "qrcode");
 
-    const testApiConnection = () => {
-      return store.dispatch("application/testApiConnection");
-    };
-
-    return { showQrCodeComponent, testApiConnection };
-  },
-  created() {
-    this.testApiConnection().then((res) => {
-      console.log(res);
-    });
+    return { currentAction: computed(() => currentAction.value) };
   },
 };
 </script>

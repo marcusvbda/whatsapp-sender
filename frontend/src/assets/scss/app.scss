@@ -1,11 +1,10 @@
 @import "./tailwind.scss";
 
-.color-red {
-    color : red;
-}
-
-
 @layer components {
+  #app,body,html{ 
+    @apply h-full;
+  }
+
   body {
     @apply bg-dark font-montserrat ;
   }

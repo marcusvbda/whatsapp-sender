@@ -1,0 +1,30 @@
+@layer components {
+    .loading-section{
+        @apply h-full;
+        
+        .container {
+            @apply flex flex-col items-center justify-center h-full w-2/6;
+            .logo {
+                @apply h-160px w-160px mb-5;
+            }
+
+            .loading--progress {
+                @apply mb-8;
+            }
+
+            .loading--title {
+                @apply text-center text-white text-lg mb-1;
+            }
+
+            .loading--subtitle {
+                @apply text-center text-white text-opacity-50 text-sm flex flex-row items-center;
+
+                .locked-icon {
+                    @apply bg-locked-svg bg-no-repeat bg-contain mr-2 h-15px w-15px;
+                }
+            }
+        }
+
+        
+    }
+}

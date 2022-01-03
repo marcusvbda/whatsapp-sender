@@ -1,0 +1,40 @@
+@layer components {
+    .qrcode-card {
+
+      .--card {
+        @apply mx-40 rounded drop-shadow-md overflow-hidden h-auto;
+
+        .--body {
+          @apply bg-white py-11 text-gray-600 flex flex-row;
+
+          .--left {
+            @apply w-4/6;
+
+            .--title {
+              @apply text-3xl mb-16 font-normal;
+            }
+
+            .--option-list {
+              @apply flex flex-col;
+
+              .--item {
+                @apply mb-4;
+              }
+            }
+          }
+
+          .--right {
+            @apply w-2/6;
+
+            .--qrcode-skeleton {
+              @apply h-full w-auto bg-gray-300 rounded animate-pulse; 
+            }
+          }
+        }
+
+        .--footer {
+          @apply bg-gray-200 py-12 px-24 flex justify-center items-center text-center text-sm font-light;
+        }
+      }
+    }
+}

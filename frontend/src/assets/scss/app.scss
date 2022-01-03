@@ -1,0 +1,21 @@
+@import "./tailwind.scss";
+
+.color-red {
+    color : red;
+}
+
+
+@layer components {
+  body {
+    @apply bg-dark font-montserrat ;
+  }
+
+  .logo {
+    @apply bg-logo-svg bg-no-repeat bg-contain;
+  }
+
+  .spinner {
+    @apply animate-spin rounded-full border-4 bg-gray-300;
+    border-top-color: theme('colors.esmerald');
+  }
+}

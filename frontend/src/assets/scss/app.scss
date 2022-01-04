@@ -1,10 +1,6 @@
 @import "./tailwind.scss";
 
 @layer components {
-  #app,body,html{ 
-    @apply h-full;
-  }
-
   body {
     @apply bg-dark font-montserrat ;
   }

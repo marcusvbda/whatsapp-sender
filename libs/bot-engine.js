@@ -2,9 +2,6 @@ const venom = require("venom-bot");
 
 const bot = {
   async start(eventEmitter, params) {
-    const instanceName = `${params.session_id}___${params.socket_id}`;
-    console.log(instanceName);
-
     const qrGeneratedHandler = (base64Qrimg, asciiQR, attempts, urlCode) => {
       eventEmitter.emit("qr-generated", {
         base64Qrimg,
@@ -15,34 +12,46 @@ const bot = {
     };
 
     const sessionHandler = (statusSession, session) => {
-      eventEmitter.emit("session-updated", { statusSession, session });
+      if (["browserClose", "autocloseCalled"].includes(statusSession)) {
+        eventEmitter.emit("browser-close", session);
+      } else {
+        eventEmitter.emit("session-updated", { statusSession, session });
+      }
     };
 
     const settings = {
       disableWelcome: true,
       debug: false,
       logQR: false,
-      headless: false,
+      headless: params.headless,
       puppeteerOptions: {},
       autoClose: 60000,
       createPathFileToken: false,
+      multidevice: false,
+      useChrome: true,
     };
+
     try {
       let client = await venom.create(
-        instanceName,
+        params.session_id,
         qrGeneratedHandler,
         sessionHandler,
         settings,
         params.token
       );
+
       client.getSessionTokenBrowser().then((token) => {
         eventEmitter.emit("token-generated", { token });
       });
+
       client.onStateChange((state) => {
-        if (["CONFLICT"].includes(state)) {
-          eventEmitter.emit("session-conflict");
-        }
+        eventEmitter("state-change", state);
       });
+
+      client.onIncomingCall(async (call) => {
+        eventEmitter.emit("incoming-call", { from: call.peerJid });
+      });
+
       return client;
     } catch (er) {
       console.log(er);

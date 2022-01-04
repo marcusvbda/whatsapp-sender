@@ -1,6 +1,6 @@
 @layer components {
     .loading-section{
-        @apply h-full;
+        @apply absolute w-full h-full;
         
         .container {
             @apply flex flex-col items-center justify-center h-full w-2/6;

@@ -5,7 +5,7 @@
         <div class="--body">
           <div class="--left">
             <div class="container">
-              <h1 class="--title">Para iniciar sessão ao serviço :</h1>
+              <h1 class="--title">Para iniciar sessão no serviço :</h1>
               <div class="--option-list">
                 <div class="--item">1. Abra o WhatsApp em seu celular.</div>
                 <div class="--item">

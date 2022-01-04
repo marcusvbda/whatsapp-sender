@@ -13,7 +13,7 @@
 <script>
 import GradientTopbar from "@/components/gradientTopbar";
 import QrCodeCard from "@/components/qrCodeCard";
-import LoadingSection from "@/components/LoadingSection";
+import LoadingSection from "@/components/loadingSection";
 import { computed } from "@vue/reactivity";
 import { useStore } from "vuex";
 

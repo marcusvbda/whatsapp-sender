@@ -15,7 +15,7 @@
 import "./styles.scss";
 import ProgressBar from "@/components/progressBar";
 export default {
-  name: "LoadingSection",
+  name: "loadingSection",
   components: {
     ProgressBar,
   },

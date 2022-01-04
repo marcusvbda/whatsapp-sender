@@ -1,12 +1,15 @@
-const app = require("express")();
+const express = require("express");
+const app = express();
 const http = require("http").createServer(app);
 const cors = require("cors");
 app.use(cors());
+const botEngine = require("./libs/bot-engine");
 const bodyParser = require("body-parser");
 const isProduction = process.env.NODE_ENV == "production";
 const path = process.cwd();
 const distPath = `${path}/frontend/dist`;
 const EventEmitter = require("events");
+const sessions = {};
 
 const io = require("socket.io")(http, {
   allowEIO3: true,
@@ -37,22 +40,47 @@ io.sockets.on("connection", (socket) => {
   socket.emit("connected", { id: socket.id });
 
   socket.on("start-engine", async (params) => {
-    socket.engine = require("./libs/bot-engine");
-    socket.engine
-      .start(eventEmitter, { ...params, socket_id: socket.id })
-      .then((client) => {
-        socket.client = client;
+    let isConnected = false;
+    console.log(sessions[params.session_id]);
+    if (
+      sessions[params.session_id] &&
+      sessions[params.session_id]?.isConnected
+    ) {
+      isConnected = await sessions[params.session_id].isConnected();
+    }
+
+    if (isConnected) {
+      socket.emit("session-updated", {
+        statusSession: "isLogged",
+        session: params.session_id,
       });
+    } else {
+      botEngine
+        .start(eventEmitter, {
+          ...params,
+          headless: isProduction,
+          socket_id: socket.id,
+        })
+        .then((client) => {
+          sessions[params.session_id] = client;
+        });
+    }
   });
 
   [
     "qr-generated",
     "session-updated",
     "token-generated",
-    "session-conflict",
+    "incoming-call",
+    "state-change",
   ].map((event) => {
     eventEmitter.on(event, (data) => {
       socket.emit(event, data);
     });
+  });
+
+  eventEmitter.on("browser-close", (session) => {
+    socket.emit("browser-close", session);
+    delete sessions[session];
   });
 });

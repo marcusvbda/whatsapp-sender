@@ -5,11 +5,11 @@
         @apply rounded-2xl drop-shadow-md overflow-hidden h-auto;
 
         .--body {
-          @apply bg-white py-11 flex flex-row;
+          @apply bg-darkest-900 text-gray-300 py-11 flex flex-row;
         }
 
         .--footer {
-          @apply bg-gray-200 py-12 px-24 flex justify-center items-center text-center text-sm font-light;
+          @apply bg-darkest-700 py-12 px-24 flex justify-center text-gray-300 items-center text-center text-sm font-light;
         }
       }
     }

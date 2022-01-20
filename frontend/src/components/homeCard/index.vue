@@ -4,7 +4,17 @@
       <div class="--content">
         <h3 class="--title">Envio de mensagem</h3>
         <TabsContainer :tabs="['Definição Manual', 'Importação de planilha']">
-          <template v-slot:tab-0> Definição aqui </template>
+          <template v-slot:tab-0>
+            <input
+              class="forms --numbers"
+              placeholder="Números separados por virgula"
+            />
+            <textarea
+              class="forms --message"
+              placeholder="Olá {nome}, está mensagem está sendo enviada via WhatsApp Sender ... "
+              rows="6"
+            />
+          </template>
           <template v-slot:tab-1> importação aqui </template>
         </TabsContainer>
       </div>

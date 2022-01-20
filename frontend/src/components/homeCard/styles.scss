@@ -3,13 +3,21 @@
     .--card {
 
       .--body {
-        @apply bg-darkest-900 px-11 text-gray-400 flex flex-row;
+        @apply px-11;
 
         .--content {
             @apply flex-col w-full;
           
           .--title {
             @apply text-3xl font-montserrat font-semibold text-center mb-11;
+          }
+
+          .--numbers {
+            @apply mb-6;
+          }
+
+          .--message {
+            @apply mb-6;
           }
         }
         

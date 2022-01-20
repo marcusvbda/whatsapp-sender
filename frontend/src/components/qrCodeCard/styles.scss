@@ -1,7 +1,6 @@
 @layer components {
   .qr-card .--card {
       .--body {
-        @apply text-gray-600;
 
       .--left {
         @apply w-4/6;
@@ -10,7 +9,7 @@
           @apply text-3xl mb-16 font-normal;
         }
         .--option-list {
-          @apply flex flex-col;
+          @apply flex flex-col mb-11;
           .--item {
             @apply mb-4;
           }

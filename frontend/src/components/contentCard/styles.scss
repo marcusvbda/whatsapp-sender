@@ -1,0 +1,16 @@
+@layer components {
+    .content-card {
+
+      .--card {
+        @apply rounded drop-shadow-md overflow-hidden h-auto;
+
+        .--body {
+          @apply bg-white py-11 text-gray-600 flex flex-row;
+        }
+
+        .--footer {
+          @apply bg-gray-200 py-12 px-24 flex justify-center items-center text-center text-sm font-light;
+        }
+      }
+    }
+}

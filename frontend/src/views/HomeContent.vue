@@ -4,15 +4,14 @@
     <GradientTopbar />
     <section class="relative top-140neg">
       <QrCodeCard v-if="currentAction == 'qrcode'" />
-      <template v-if="currentAction == 'home'">
-        <h1>Is Logged</h1>
-      </template>
+      <HomeCard  v-if="currentAction == 'home'"/>
     </section>
   </div>
 </template>
 <script>
 import GradientTopbar from "@/components/gradientTopbar";
 import QrCodeCard from "@/components/qrCodeCard";
+import HomeCard from "@/components/homeCard";
 import LoadingSection from "@/components/loadingSection";
 import { computed } from "@vue/reactivity";
 import { useStore } from "vuex";
@@ -23,6 +22,7 @@ export default {
     GradientTopbar,
     QrCodeCard,
     LoadingSection,
+    HomeCard
   },
   setup() {
     const store = useStore();

@@ -41,7 +41,6 @@ io.sockets.on("connection", (socket) => {
 
   socket.on("start-engine", async (params) => {
     let isConnected = false;
-    console.log(sessions[params.session_id]);
     if (
       sessions[params.session_id] &&
       sessions[params.session_id]?.isConnected

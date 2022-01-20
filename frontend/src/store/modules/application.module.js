@@ -22,7 +22,8 @@ export default {
     };
   },
   getters: {
-    getCurrentAction: (state) => state.currentAction,
+    // getCurrentAction: (state) => state.currentAction,
+    getCurrentAction: () => "home",
     getSocket: (state) => state.socket,
     getQrCodeIsLoading: (state) => state.qrCodeIsLoading,
     getQrCodeImage: (state) => state.qrCodeImage,

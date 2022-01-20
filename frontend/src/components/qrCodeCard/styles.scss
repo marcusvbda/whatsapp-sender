@@ -1,23 +1,26 @@
 @layer components {
-  .qr-card .--card .--body {
+  .qr-card .--card {
+      .--body {
+        @apply text-gray-600;
 
-    .--left {
-      @apply w-4/6;
+      .--left {
+        @apply w-4/6;
 
-      .--title {
-        @apply text-3xl mb-16 font-normal;
-      }
-      .--option-list {
-        @apply flex flex-col;
-        .--item {
-          @apply mb-4;
+        .--title {
+          @apply text-3xl mb-16 font-normal;
+        }
+        .--option-list {
+          @apply flex flex-col;
+          .--item {
+            @apply mb-4;
+          }
         }
       }
-    }
-    .--right {
-      @apply w-2/6;
-      .--qrcode-skeleton {
-        @apply h-full w-auto bg-gray-300 rounded animate-pulse; 
+      .--right {
+        @apply w-2/6;
+        .--qrcode-skeleton {
+          @apply h-full w-auto bg-gray-300 rounded animate-pulse; 
+        }
       }
     }
   }

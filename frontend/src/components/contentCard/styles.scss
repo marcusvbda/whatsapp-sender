@@ -1,11 +1,11 @@
 @layer components {
     .content-card {
-
+      
       .--card {
-        @apply rounded drop-shadow-md overflow-hidden h-auto;
+        @apply rounded-2xl drop-shadow-md overflow-hidden h-auto;
 
         .--body {
-          @apply bg-white py-11 text-gray-600 flex flex-row;
+          @apply bg-white py-11 flex flex-row;
         }
 
         .--footer {

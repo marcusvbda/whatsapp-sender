@@ -23,6 +23,11 @@ module.exports = {
       colors: {
         esmerald: "#00BFA5",
         dark: "#26404D",
+        darkest: {
+          900: "#131C21",
+          800: "#1D262C",
+          700: "#494949",
+        },
         white: colors.white,
         transparent: "transparent",
       },

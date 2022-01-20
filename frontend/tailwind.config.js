@@ -14,6 +14,8 @@ module.exports = {
       },
       spacing: {
         "140neg": "-140px",
+        "2px": "2px",
+        "15px": "15px",
       },
       fontFamily: {
         montserrat: ["Montserrat"],
@@ -37,12 +39,16 @@ module.exports = {
         "160px": "160px",
         "5px": "5px",
         "15px": "15px",
+        "23px": "23px",
+        "17px": "17px",
       },
       width: {
         "65px": "65px",
         "160px": "160px",
         "15px": "15px",
         "40%": "40%",
+        "35px": "35px",
+        "17px": "17px",
       },
       keyframes: {
         wiggle: {

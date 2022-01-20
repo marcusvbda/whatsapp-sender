@@ -1,4 +1,5 @@
 @import "./tailwind.scss";
+@import "./inputs.scss";
 
 @layer components {
   body {
@@ -12,9 +13,5 @@
   .spinner {
     @apply animate-spin rounded-full border-4 bg-gray-300;
     border-top-color: theme('colors.esmerald');
-  }
-
-  .forms {
-      @apply w-full rounded-xl bg-darkest-700 p-4;
   }
 }

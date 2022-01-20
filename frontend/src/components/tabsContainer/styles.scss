@@ -1,10 +1,13 @@
 @layer components {
   .tabs{
     .--row-tabs {
-      @apply grid-cols-6 grid gap-4 ;
-
+     
       .--tab-btn {
-        @apply bg-darkest-800 p-3 rounded-tl-2xl rounded-br-2xl hover:text-white cursor-pointer mb-4;
+        +.--tab-btn  {
+          @apply ml-4;
+        }
+  
+        @apply bg-darkest-800 py-3 px-4 rounded-tl-2xl rounded-br-2xl hover:text-white cursor-pointer mb-4;
 
         &.active {
           @apply bg-esmerald text-white;

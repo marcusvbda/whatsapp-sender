@@ -39,6 +39,14 @@
           .--obs-row {
             @apply text-center text-gray-600;
           }
+
+          .--input-file {
+            @apply flex-row;
+
+            input {
+              @apply w-5/6 pl-44;
+            }
+          }
         }
         
       }

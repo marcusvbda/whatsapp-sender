@@ -17,6 +17,7 @@ module.exports = {
         "2px": "2px",
         "15px": "15px",
         "10px": "10px",
+        inherit: "inherit",
       },
       fontFamily: {
         montserrat: ["Montserrat"],
@@ -33,6 +34,7 @@ module.exports = {
         },
         white: colors.white,
         transparent: "transparent",
+        overlay: "#9b9b9b6b",
       },
       height: {
         "222px": "222px",
@@ -42,6 +44,7 @@ module.exports = {
         "15px": "15px",
         "23px": "23px",
         "17px": "17px",
+        "150px": "150px",
       },
       width: {
         "65px": "65px",
@@ -50,6 +53,7 @@ module.exports = {
         "40%": "40%",
         "35px": "35px",
         "17px": "17px",
+        "300px": "300px",
       },
       keyframes: {
         wiggle: {

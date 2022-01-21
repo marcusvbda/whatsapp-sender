@@ -1,0 +1,49 @@
+@layer components {
+    .overlay-progress {
+        @apply fixed z-10 bg-overlay top-0 bottom-0 left-0 right-0 flex items-center justify-center cursor-not-allowed;
+
+        .--dialog {
+            @apply bg-darkest-800 w-300px mx-auto rounded-2xl shadow-lg cursor-default py-4 px-5 flex-col relative;
+
+            
+            .--close-btn {
+                @apply text-gray-500 hover:text-gray-300 duration-300 absolute right-5 cursor-pointer;  
+            }
+
+            .--title {
+                @apply font-montserrat text-center font-semibold text-2xl text-gray-300;
+            }
+
+            .--row-btns {
+                @apply flex flex-row mt-5 text-gray-300 font-montserrat;
+
+                .--progress-numbers {
+                    @apply mr-auto;
+                }
+            }
+
+            .--play-btns {
+                svg {
+                    @apply text-gray-500 hover:text-gray-300 duration-300 cursor-pointer;
+                }
+                svg+svg {
+                    @apply ml-2;
+                }
+            }
+
+            .--progressbar {    
+                @apply w-full h-5px overflow-hidden rounded-md relative bg-gray-600 mt-3;
+        
+                .--progressbar-progress {
+                    @apply bg-esmerald h-full duration-300 absolute;
+                }
+            }
+
+            .--description {
+                @apply text-xs mt-3 text-gray-300 font-montserrat text-center;
+            }
+
+        }
+    }
+
+}

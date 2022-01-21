@@ -1,11 +1,7 @@
 <template>
   <div>
     <div class="--input-file">
-      <input
-        class="form-input --numbers"
-        placeholder="planilha_de_telefones.xls"
-      />
-      <button>Upload</button>
+      <input class="form-input --numbers" type="file" />
     </div>
     <textarea
       class="form-input --message"

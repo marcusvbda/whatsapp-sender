@@ -28,7 +28,7 @@ export default {
     },
     current_tab: {
       type: Number,
-      default: 0,
+      default: 1,
     },
   },
   setup(props) {

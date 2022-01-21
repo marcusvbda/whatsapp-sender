@@ -1,7 +1,9 @@
-.progressbar-section {    
-    @apply w-full h-5px overflow-hidden rounded-md relative bg-gray-800;
+@layer components {
+    .progressbar-section {    
+        @apply w-full h-5px overflow-hidden rounded-md relative bg-gray-800;
 
-    .progressbar--progress {
-        @apply bg-esmerald h-full duration-300 absolute w-40% animate-wiggle;
+        .progressbar--progress {
+            @apply bg-esmerald h-full duration-300 absolute w-40% animate-wiggle;
+        }
     }
 }

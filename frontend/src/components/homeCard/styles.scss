@@ -21,7 +21,7 @@
           }
 
           .--dropzone {
-             @apply mt-4 border-dashed border-2 border-esmerald w-full text-center py-20 cursor-pointer;
+             @apply mt-4 border-dashed border-2 border-esmerald w-full text-center py-20 cursor-pointer rounded-2xl;
           }
 
           .--submit-row {
@@ -44,7 +44,11 @@
             @apply flex-row;
 
             input {
-              @apply w-5/6 pl-44;
+              @apply p-2 text-gray-400;
+
+              &::-webkit-file-upload-button {
+                @apply py-2 px-4 mr-3 rounded-md bg-esmerald text-white border-0;
+              }
             }
           }
         }

@@ -7,7 +7,7 @@
           @apply ml-4;
         }
   
-        @apply bg-darkest-800 py-3 px-4 rounded-tl-2xl rounded-br-2xl hover:text-white cursor-pointer mb-4;
+        @apply bg-darkest-800 px-4 rounded-tl-2xl rounded-br-2xl hover:text-white cursor-pointer mb-4 pb-2 pt-3;
 
         &.active {
           @apply bg-esmerald text-white;

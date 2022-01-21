@@ -16,6 +16,7 @@ module.exports = {
         "140neg": "-140px",
         "2px": "2px",
         "15px": "15px",
+        "10px": "10px",
       },
       fontFamily: {
         montserrat: ["Montserrat"],

@@ -3,7 +3,7 @@
     <template v-slot:body>
       <div class="--content">
         <h3 class="--title">Envio de mensagem</h3>
-        <TabsContainer :tabs="['Definição Manual', 'Importação de planilha']">
+        <TabsContainer :tabs="['Definição manual', 'Importação de planilha']">
           <template v-slot:tab-0>
             <input
               class="form-input --numbers"
@@ -18,6 +18,19 @@
               <input type="checkbox" v-model="attachment" />
               Enviar anexo
             </label>
+            <section class="--dropzone" v-if="attachment">
+              Arraste seu arquivo para cá ou clique para fazer o upload ...
+            </section>
+            <div class="--submit-row">
+              <div class="--submit-btn">
+                Iniciar envio
+                <i class="fas fa-arrow-right" />
+              </div>
+            </div>
+            <div class="--obs-row">
+              O envio das mensagens poderá ser pausado ou paralisado a qualquer
+              momento.
+            </div>
           </template>
           <template v-slot:tab-1> importação aqui </template>
         </TabsContainer>

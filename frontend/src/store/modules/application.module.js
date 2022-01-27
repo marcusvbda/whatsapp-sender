@@ -30,27 +30,13 @@ export default {
     getIsLogged: (state) => state.logged,
   },
   mutations: {
-    setCurrentAction(state, payload) {
-      state.currentAction = payload;
-    },
-    setSocket(state, payload) {
-      state.socket = payload;
-    },
-    setQrCodeIsLoading(state, payload) {
-      state.qrCodeIsLoading = payload;
-    },
-    setQrCodeImage(state, payload) {
-      state.qrCodeImage = payload;
-    },
-    setLogged(state, payload) {
-      state.logged = payload;
-    },
-    setToken(state, payload) {
-      state.token = payload;
-    },
-    setConnectionId(state, payload) {
-      state.connection_id = payload;
-    },
+    setCurrentAction: (state, payload) => (state.currentAction = payload),
+    setSocket: (state, payload) => (state.socket = payload),
+    setQrCodeIsLoading: (state, payload) => (state.qrCodeIsLoading = payload),
+    setQrCodeImage: (state, payload) => (state.qrCodeImage = payload),
+    setLogged: (state, payload) => (state.logged = payload),
+    setToken: (state, payload) => (state.token = payload),
+    setConnectionId: (state, payload) => (state.connection_id = payload),
   },
   actions: {
     initSocket,

@@ -4,7 +4,7 @@
     <GradientTopbar />
     <section class="relative top-140neg">
       <QrCodeCard v-if="currentAction == 'qrcode'" />
-      <HomeCard  v-if="currentAction == 'home'"/>
+      <HomeCard v-if="currentAction == 'home'" />
     </section>
   </div>
 </template>
@@ -22,7 +22,7 @@ export default {
     GradientTopbar,
     QrCodeCard,
     LoadingSection,
-    HomeCard
+    HomeCard,
   },
   setup() {
     const store = useStore();

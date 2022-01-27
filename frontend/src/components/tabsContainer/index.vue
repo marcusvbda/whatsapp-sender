@@ -18,6 +18,7 @@
 <script>
 import "./styles.scss";
 import { reactive, ref } from "@vue/reactivity";
+import { watch } from "@vue/runtime-core";
 
 export default {
   name: "tabsContainer",
@@ -26,21 +27,22 @@ export default {
       type: Array,
       default: () => [],
     },
-    current_tab: {
+    value: {
       type: Number,
-      default: 1,
+      default: 0,
     },
   },
-  setup(props) {
+  setup(props, { emit }) {
     const action = reactive("start");
-    const tab = ref(props.current_tab);
+    const tab = ref(props.value);
+    watch(tab, (val) => {
+      emit("update:modelValue", val);
+    });
+
     return {
       action,
       tab,
     };
-  },
-  created() {
-    console.log(this.$slots);
   },
 };
 </script>

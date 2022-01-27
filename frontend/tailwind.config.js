@@ -34,7 +34,10 @@ module.exports = {
         },
         white: colors.white,
         transparent: "transparent",
-        overlay: "#9b9b9b6b",
+        overlay: "rgba(0, 0, 0, 0.4)",
+        orange: {
+          900: "#ff7700",
+        },
       },
       height: {
         "222px": "222px",

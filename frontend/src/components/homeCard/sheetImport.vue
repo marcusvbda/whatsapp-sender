@@ -3,11 +3,6 @@
     <div class="--input-file">
       <input class="form-input --numbers" type="file" />
     </div>
-    <textarea
-      class="form-input --message"
-      placeholder="Olá {nome}, está mensagem está sendo enviada via WhatsApp Sender ... "
-      rows="6"
-    />
   </div>
 </template>
 <script>

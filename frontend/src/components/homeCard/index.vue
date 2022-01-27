@@ -4,7 +4,10 @@
       <template v-slot:body>
         <div class="--content">
           <h3 class="--title">Envio de mensagem</h3>
-          <TabsContainer :tabs="['Definição manual', 'Importação de planilha']">
+          <TabsContainer
+            :tabs="['Definição manual', 'Importação de planilha']"
+            v-model="tab"
+          >
             <template v-slot:tab-0>
               <ManualDefinition />
             </template>
@@ -12,23 +15,7 @@
               <SheetImport />
             </template>
           </TabsContainer>
-          <label :class="`form-switch --checkbox ${attachment && 'checked'}`">
-            <input type="checkbox" v-model="attachment" />
-            Enviar anexo
-          </label>
-          <section class="--dropzone" v-if="attachment">
-            Arraste seu arquivo para cá ou clique para fazer o upload ...
-          </section>
-          <div class="--submit-row">
-            <div class="--submit-btn">
-              Iniciar envio
-              <i class="fas fa-arrow-right" />
-            </div>
-          </div>
-          <div class="--obs-row">
-            O envio das mensagens poderá ser pausado ou paralisado a qualquer
-            momento.
-          </div>
+          <FooterFields />
         </div>
       </template>
     </ContentCard>
@@ -41,8 +28,11 @@ import TabsContainer from "@/components/tabsContainer";
 import ManualDefinition from "@/components/homeCard/manualDefinition";
 import SheetImport from "@/components/homeCard/sheetImport";
 import ProgressOverlay from "@/components/progressOverlay";
+import FooterFields from "@/components/homeCard/footerFields";
 import "./styles.scss";
 import { ref } from "@vue/reactivity";
+import { useStore } from "vuex";
+import { computed } from "@vue/runtime-core";
 
 export default {
   name: "QrCodeCard",
@@ -52,15 +42,21 @@ export default {
     ManualDefinition,
     SheetImport,
     ProgressOverlay,
+    FooterFields,
   },
   setup() {
+    const store = useStore();
     const action = ref("start");
-    const attachment = ref(false);
     const sending = ref(false);
+    const tab = computed({
+      get: () => store.getters["sender/getTab"],
+      set: (val) => store.commit("sender/setTab", val),
+    });
+
     return {
       action,
-      attachment,
       sending,
+      tab,
     };
   },
 };

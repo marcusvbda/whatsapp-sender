@@ -28,7 +28,6 @@
 import { ref } from "@vue/reactivity";
 import { computed } from "@vue/runtime-core";
 import { useStore } from "vuex";
-import { VueApp } from "@/main";
 
 export default {
   name: "footerFields",
@@ -36,45 +35,11 @@ export default {
     const store = useStore();
     const attachment = ref(false);
     const numbers = computed(() => store.getters["sender/getNumbers"]);
-    const tab = computed(() => store.getters["sender/getTab"]);
     const message = computed({
       get: () => store.getters["sender/getMessage"],
       set: (val) => store.commit("sender/setMessage", val),
     });
-
-    const handleValidationForSend = (tab, ...params) => {
-      const validationException = (msg) => ({ type: "warning", msg });
-      let actions = {
-        0: () => {
-          const [message, numbers] = params;
-          if (!message.value || !numbers.value) {
-            throw new validationException(
-              "Por favor, preencha os campo de mensagem número de telefone"
-            );
-          }
-        },
-      };
-      return actions[tab.value] && actions[tab.value]();
-    };
-
-    const submit = () => {
-      let actions = {
-        0: () => {
-          handleValidationForSend(tab, message, numbers);
-        },
-      };
-      try {
-        actions[tab.value] && actions[tab.value]();
-      } catch (error) {
-        if (error?.type) {
-          VueApp.$swal.fire({
-            icon: error.type,
-            title: "Atenção !",
-            text: error.msg,
-          });
-        }
-      }
-    };
+    const submit = () => store.dispatch("sender/submit");
 
     return {
       attachment,

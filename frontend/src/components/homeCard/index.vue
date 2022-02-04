@@ -19,7 +19,7 @@
         </div>
       </template>
     </ContentCard>
-    <ProgressOverlay v-if="sending" :total="100" :current="51" />
+    <ProgressOverlay />
   </div>
 </template>
 <script>
@@ -47,7 +47,6 @@ export default {
   setup() {
     const store = useStore();
     const action = ref("start");
-    const sending = ref(false);
     const tab = computed({
       get: () => store.getters["sender/getTab"],
       set: (val) => store.commit("sender/setTab", val),
@@ -55,7 +54,6 @@ export default {
 
     return {
       action,
-      sending,
       tab,
     };
   },

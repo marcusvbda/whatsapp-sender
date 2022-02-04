@@ -1,12 +1,14 @@
 <template>
-  <div class="overlay-progress">
+  <div class="overlay-progress" v-if="sending">
     <div class="--dialog">
       <div class="--close-btn">
         <i class="fas fa-times" />
       </div>
       <div class="--title">ENVIANDO</div>
       <div class="--row-btns">
-        <div class="--progress-numbers">{{ current }}/{{ total }}</div>
+        <div class="--progress-numbers">
+          {{ current_number_index }}/{{ sending_numbers.length }}
+        </div>
         <div class="--play-btns">
           <i class="fas fa-stop" />
           <i class="fas fa-pause" />
@@ -15,7 +17,9 @@
       <div class="--progressbar">
         <div
           class="--progressbar-progress"
-          :style="{ width: `${(current * 100) / total}%` }"
+          :style="{
+            width: `${(current_number_index * 100) / sending_numbers.length}%`,
+          }"
         />
       </div>
       <div class="--description">Para editar a mensagem pause o envio</div>
@@ -23,18 +27,25 @@
   </div>
 </template>
 <script>
+import { computed } from "@vue/runtime-core";
 import "./styles.scss";
+import { useStore } from "vuex";
 
 export default {
-  props: {
-    total: {
-      type: Number,
-      default: 100,
-    },
-    current: {
-      type: Number,
-      default: 0,
-    },
+  setup() {
+    const store = useStore();
+    const sending = computed(() => store.getters["sender/sending"]);
+    const sending_numbers = computed(
+      () => store.getters["sender/sending_numbers"]
+    );
+    const current_number_index = computed(
+      () => store.getters["sender/current_number_index"]
+    );
+    return {
+      sending,
+      sending_numbers,
+      current_number_index,
+    };
   },
 };
 </script>

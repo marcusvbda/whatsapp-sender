@@ -3,6 +3,7 @@ import App from "./App.vue";
 import "@/assets/scss/app.scss";
 import store from "@/store";
 import VueSweetalert2 from "vue-sweetalert2";
+import "@fortawesome/fontawesome-free/js/all.js";
 
 const app = createApp(App);
 app.use(store);

@@ -38,6 +38,9 @@ module.exports = {
         orange: {
           900: "#ff7700",
         },
+        red: {
+          900: "#780000",
+        },
       },
       height: {
         "222px": "222px",

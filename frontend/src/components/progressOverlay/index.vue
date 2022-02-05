@@ -5,7 +5,7 @@
         <i class="fas fa-times" />
       </div>
       <div class="--title">
-        <template v-if="show_result"> FINALIZADO </template>
+        <template v-if="show_result"> FINALIZADO !</template>
         <template v-else>
           {{ sending_state == "pause" ? "ENVIO PAUSADO" : "ENVIANDO" }}
         </template>
@@ -13,10 +13,16 @@
       <template v-if="show_result">
         <div class="--description">
           <div class="--result">
-            Foram enviadas com sucesso {{ sent_count }} de
-            {{ total_count }} mensagens.
+            {{
+              sent_count > 1
+                ? "Foram enviados com sucesso"
+                : "Foi enviado com sucesso"
+            }}
+            {{ sent_count }} de {{ total_count }}
+            {{ sent_count > 1 ? "mensagens" : "mensagem" }}.
           </div>
-          Para exportar os resultados,
+          Para exportar
+          {{ sent_count > 1 ? "os resultados." : "o resultado" }},
           <a href="#" @click.prevent="export_report" class="--export">
             clique aqui.
           </a>
@@ -60,7 +66,7 @@
   </div>
 </template>
 <script>
-import { computed } from "@vue/runtime-core";
+import { computed, ref } from "@vue/runtime-core";
 import "./styles.scss";
 import { useStore } from "vuex";
 import { sweetalert } from "@/libs/sweetalert";
@@ -79,7 +85,26 @@ export default {
     const sending_state = computed(() => {
       return store.getters["sender/getSendingState"];
     });
-    const close_result = () => store.dispatch("sender/closeResult");
+    const exported = ref(false);
+    const close_result = () => {
+      const action = () => store.dispatch("sender/closeResult");
+      if (exported.value) {
+        return action();
+      }
+      sweetalert
+        .confirm(
+          "Confirmação",
+          "Deseja fechar exportação de resultados ?",
+          "warning",
+          "Sim",
+          "Não"
+        )
+        .then(({ isConfirmed }) => {
+          if (isConfirmed) {
+            action();
+          }
+        });
+    };
     const set_sending_state = (val) => {
       store.commit("sender/setSendingState", val);
     };
@@ -96,8 +121,8 @@ export default {
       pause();
       sweetalert
         .confirm("Confirmação", "Deseja mesmo interromper o envio ?")
-        .then((result) => {
-          if (!result.isConfirmed) {
+        .then(({ isConfirmed }) => {
+          if (!isConfirmed) {
             return play();
           }
           store.dispatch("sender/resetState");
@@ -106,7 +131,7 @@ export default {
 
     const export_report = () => {
       alert("Ainda nao implementado");
-      close_result();
+      exported.value = true;
     };
 
     return {

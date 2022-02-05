@@ -13,14 +13,20 @@ export const sweetalert = {
       timer: 2000,
     });
   },
-  async confirm(title, text, icon = "warning") {
+  async confirm(
+    title,
+    text,
+    icon = "warning",
+    confirmButtonText = "Confirmar",
+    cancelButtonText = "Cancelar"
+  ) {
     return VueApp.$swal.fire({
       title,
       text,
       icon,
       showCancelButton: true,
-      confirmButtonText: "Confirmar",
-      cancelButtonText: "Cancelar",
+      confirmButtonText,
+      cancelButtonText,
     });
   },
 };

@@ -33,7 +33,11 @@ export default {
     setNumbers: (state, payload) => (state.numbers = payload),
     setTab: (state, payload) => (state.tab = payload),
     setMessage: (state, payload) => (state.message = payload),
-    setSending: (state, payload) => (state.sending = payload),
+    setSending: (state, payload) => {
+      const el = document.querySelector("html");
+      el.style.overflow = payload ? "hidden" : "unset";
+      state.sending = payload;
+    },
     setCurrentNumberIndex: (state, payload) => {
       state.current_number_index = payload;
     },
@@ -57,15 +61,12 @@ export default {
       commit("setShowResult", false);
       dispatch("resetState");
     },
-    finishSending({ commit }) {
-      commit("setCurrentNumberIndex", 0);
-      commit("setShowResult", true);
-    },
     async sendCurrentMessage({ dispatch, commit, getters }, number) {
       commit("setSending", true);
       let index = getters.getCurrentNumberIndex;
       await dispatch("sendEngineMessage", number);
       if (index == getters.getSendingNumbers.length) {
+        commit("setShowResult", true);
         return sweetalert.toast("Envio finalizado").then(() => {
           dispatch("finishSending");
         });
@@ -113,7 +114,7 @@ export default {
         actions[state.tab] && actions[state.tab]();
       } catch (error) {
         if (error?.type) {
-          sweetalert.alert(error.type, "Erro", error.msg);
+          sweetalert.alert(error.type, "Atenção", error.msg);
         }
       }
     },

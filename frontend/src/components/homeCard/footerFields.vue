@@ -6,11 +6,11 @@
       rows="6"
       v-model="message"
     />
-    <label :class="`form-switch --checkbox ${attachment && 'checked'}`">
-      <input type="checkbox" v-model="attachment" />
+    <label :class="`form-switch --checkbox ${useAttachment && 'checked'}`">
+      <input type="checkbox" v-model="useAttachment" />
       Enviar anexo
     </label>
-    <section class="--dropzone" v-if="attachment">
+    <section class="--dropzone" v-if="useAttachment">
       Arraste seu arquivo para cá ou clique para fazer o upload ...
     </section>
     <div class="--submit-row">
@@ -25,7 +25,6 @@
   </div>
 </template>
 <script>
-import { ref } from "@vue/reactivity";
 import { computed } from "@vue/runtime-core";
 import { useStore } from "vuex";
 
@@ -33,7 +32,10 @@ export default {
   name: "footerFields",
   setup() {
     const store = useStore();
-    const attachment = ref(false);
+    const useAttachment = computed({
+      get: () => store.getters["sender/getUseAttachment"],
+      set: (val) => store.commit("sender/setUseAttachment", val),
+    });
     const numbers = computed(() => store.getters["sender/getNumbers"]);
     const message = computed({
       get: () => store.getters["sender/getMessage"],
@@ -42,7 +44,7 @@ export default {
     const submit = () => store.dispatch("sender/submit");
 
     return {
-      attachment,
+      useAttachment,
       numbers,
       submit,
       message,

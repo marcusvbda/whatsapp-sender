@@ -41,6 +41,14 @@
 
             .--description {
                 @apply text-xs mt-3 text-gray-300 font-montserrat text-center;
+
+                .--result {
+                    @apply mb-10px;
+                }
+
+                .--export {
+                    @apply text-esmerald underline cursor-pointer;
+                }
             }
 
         }

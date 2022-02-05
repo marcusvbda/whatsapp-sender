@@ -1,21 +1,20 @@
-import { VueApp } from "@/main";
-const validationException = (msg) => ({ type: "warning", msg });
-const sendAlert = async (icon, title, text) => {
-  VueApp.$swal.fire({ icon, title, text });
-};
-const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+import { sleep, validationException } from "@/libs/helpers";
+import { sweetalert } from "@/libs/sweetalert";
 
 export default {
   namespaced: true,
   state() {
     return {
-      numbers: "14996766177,14996766177,14999999999",
+      numbers:
+        "14996766177,14996766177,14999999999,2121212121,2121213413,21212134141,2121413221,21314123123,123123123123,21212131,1212121231231,21212121",
       message: "teste 123",
       tab: 0,
       sending: false,
       show_result: false,
       current_number_index: 0,
       sending_state: "play",
+      use_attachment: false,
+      sent_messages: [],
     };
   },
   getters: {
@@ -27,6 +26,8 @@ export default {
     getCurrentNumberIndex: (state) => state.current_number_index,
     getShowResult: (state) => state.show_result,
     getSendingState: (state) => state.sending_state,
+    getUseAttachment: (state) => state.use_attachment,
+    getSentMessage: (state) => state.sent_messages,
   },
   mutations: {
     setNumbers: (state, payload) => (state.numbers = payload),
@@ -38,11 +39,23 @@ export default {
     },
     setShowResult: (state, payload) => (state.show_result = payload),
     setSendingState: (state, payload) => (state.sending_state = payload),
+    setUseAttachment: (state, payload) => (state.use_attachment = payload),
+    setSentMessages: (state, payload) => (state.sent_messages = payload),
   },
   actions: {
-    closeResult({ commit }) {
+    resetState({ commit }) {
+      commit("setSending", false);
+      commit("setCurrentNumberIndex", 0);
+      commit("setNumbers", "");
+      commit("setMessage", "");
+      commit("setUseAttachment", false);
+      commit("setTab", 0);
+      commit("setSentMessages", []);
+    },
+    closeResult({ dispatch, commit }) {
       commit("setSending", false);
       commit("setShowResult", false);
+      dispatch("resetState");
     },
     finishSending({ commit }) {
       commit("setCurrentNumberIndex", 0);
@@ -51,22 +64,27 @@ export default {
     async sendCurrentMessage({ dispatch, commit, getters }, number) {
       commit("setSending", true);
       let index = getters.getCurrentNumberIndex;
+      await dispatch("sendEngineMessage", number);
       if (index == getters.getSendingNumbers.length) {
-        return dispatch("finishSending");
+        return sweetalert.toast("Envio finalizado").then(() => {
+          dispatch("finishSending");
+        });
       } else {
-        await dispatch("sendEngineMessage");
         let sending_state = getters.getSendingState;
-        console.log(sending_state);
         if (sending_state == "play") {
           commit("setCurrentNumberIndex", index + 1);
-          console.log("ENVIANDO", number, getters.getMessage);
           dispatch("sendCurrentNumberMessage");
         }
       }
     },
-    async sendEngineMessage() {
+    async sendEngineMessage({ commit, getters }, number) {
       // emula demora envio
-      return sleep(1000);
+      if (number) {
+        console.log("ENVIANDO", number, getters.getMessage);
+        let sent_messages = getters.getSentMessage;
+        commit("setSentMessages", sent_messages.concat([number]));
+        return sleep(500);
+      }
     },
     sendCurrentNumberMessage({ dispatch, commit, getters }) {
       let index = getters.getCurrentNumberIndex;
@@ -84,7 +102,7 @@ export default {
       dispatch("sendCurrentNumberMessage");
     },
     sendMessageFromSheet() {
-      alert("validacao");
+      alert("Ainda nao implementado");
     },
     submit({ dispatch, state }) {
       let actions = {
@@ -95,7 +113,7 @@ export default {
         actions[state.tab] && actions[state.tab]();
       } catch (error) {
         if (error?.type) {
-          sendAlert(error.type, "Erro", error.msg);
+          sweetalert.alert(error.type, "Erro", error.msg);
         }
       }
     },

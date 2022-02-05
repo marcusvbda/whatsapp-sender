@@ -10,15 +10,26 @@
           {{ sending_state == "pause" ? "ENVIO PAUSADO" : "ENVIANDO" }}
         </template>
       </div>
-      <template v-if="show_result"> RESULTADO </template>
+      <template v-if="show_result">
+        <div class="--description">
+          <div class="--result">
+            Foram enviadas com sucesso {{ sent_count }} de
+            {{ total_count }} mensagens.
+          </div>
+          Para exportar os resultados,
+          <a href="#" @click.prevent="export_report" class="--export">
+            clique aqui.
+          </a>
+        </div>
+      </template>
       <template v-else>
         <div class="--row-btns">
           <div class="--progress-numbers">
-            {{ current_number_index }}/{{ sending_numbers.length }}
+            {{ current_number_index }}/{{ total_count }}
           </div>
           <div class="--play-btns">
             <template v-if="sending_state == 'play'">
-              <a href="#">
+              <a href="#" @click.prevent="stop">
                 <i class="fas fa-stop" />
               </a>
               <a href="#" @click.prevent="pause">
@@ -36,9 +47,7 @@
           <div
             class="--progressbar-progress"
             :style="{
-              width: `${
-                (current_number_index * 100) / sending_numbers.length
-              }%`,
+              width: `${(current_number_index * 100) / total_count}%`,
             }"
           />
         </div>
@@ -54,14 +63,15 @@
 import { computed } from "@vue/runtime-core";
 import "./styles.scss";
 import { useStore } from "vuex";
+import { sweetalert } from "@/libs/sweetalert";
 
 export default {
   setup() {
     const store = useStore();
     const sending = computed(() => store.getters["sender/getSending"]);
-    const sending_numbers = computed(() => {
-      return store.getters["sender/getSendingNumbers"];
-    });
+    const total_count = computed(
+      () => store.getters["sender/getSendingNumbers"].length
+    );
     const current_number_index = computed(() => {
       return store.getters["sender/getCurrentNumberIndex"];
     });
@@ -78,16 +88,39 @@ export default {
       set_sending_state("play");
       store.dispatch("sender/sendCurrentNumberMessage");
     };
+    const sent_count = computed(() => {
+      return store.getters["sender/getSentMessage"].length;
+    });
+
+    const stop = () => {
+      pause();
+      sweetalert
+        .confirm("Confirmação", "Deseja mesmo interromper o envio ?")
+        .then((result) => {
+          if (!result.isConfirmed) {
+            return play();
+          }
+          store.dispatch("sender/resetState");
+        });
+    };
+
+    const export_report = () => {
+      alert("Ainda nao implementado");
+      close_result();
+    };
 
     return {
       sending,
-      sending_numbers,
+      total_count,
       current_number_index,
       show_result,
       sending_state,
+      sent_count,
       close_result,
       pause,
       play,
+      stop,
+      export_report,
     };
   },
 };

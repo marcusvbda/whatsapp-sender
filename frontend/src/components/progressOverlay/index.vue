@@ -34,12 +34,12 @@ import { useStore } from "vuex";
 export default {
   setup() {
     const store = useStore();
-    const sending = computed(() => store.getters["sender/sending"]);
+    const sending = computed(() => store.getters["sender/getSending"]);
     const sending_numbers = computed(
-      () => store.getters["sender/sending_numbers"]
+      () => store.getters["sender/getSendingNumbers"]
     );
     const current_number_index = computed(
-      () => store.getters["sender/current_number_index"]
+      () => store.getters["sender/getCurrentNumberIndex"]
     );
     return {
       sending,

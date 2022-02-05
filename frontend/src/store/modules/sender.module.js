@@ -1,6 +1,5 @@
 import { VueApp } from "@/main";
 const validationException = (msg) => ({ type: "warning", msg });
-const removeArrayDuplicates = (arr) => Array.from(new Set(arr));
 const sendMessage = async (icon, title, text) => {
   VueApp.$swal.fire({ icon, title, text });
 };
@@ -14,7 +13,6 @@ export default {
       message: "teste 123",
       tab: 0,
       sending: false,
-      sending_numbers: [],
       current_number_index: 0,
     };
   },
@@ -22,16 +20,15 @@ export default {
     getNumbers: (state) => state.numbers,
     getMessage: (state) => state.message,
     getTab: (state) => state.tab,
-    sending: (state) => state.sending,
-    sending_numbers: (state) => state.sending_numbers,
-    current_number_index: (state) => state.current_number_index,
+    getSending: (state) => state.sending,
+    getSendingNumbers: (state) => state.numbers.split(","),
+    getCurrentNumberIndex: (state) => state.current_number_index,
   },
   mutations: {
     setNumbers: (state, payload) => (state.numbers = payload),
     setTab: (state, payload) => (state.tab = payload),
     setMessage: (state, payload) => (state.message = payload),
     setSending: (state, payload) => (state.sending = payload),
-    setSendingNumbers: (state, payload) => (state.sending_numbers = payload),
     setCurrentNumberIndex: (state, payload) =>
       (state.current_number_index = payload),
   },
@@ -48,32 +45,31 @@ export default {
         commit("setNumbers", "");
       });
     },
-    async sendCurrentMessage({ dispatch, commit, state }, number) {
+    async sendCurrentMessage({ dispatch, commit, getters }, number) {
       commit("setSending", true);
+      let index = getters.getCurrentNumberIndex;
 
-      await sleep(1500); // emula demora envio
-
-      if (state.current_number_index == state.sending_numbers.length) {
+      if (index == getters.getSendingNumbers.length) {
         return dispatch("finishSending");
       } else {
-        console.log("enviou", number, state.message);
-        commit("setCurrentNumberIndex", state.current_number_index + 1);
+        console.log("Enviando", number, getters.getMessage);
+        await sleep(1500); // emula demora envio
+        commit("setCurrentNumberIndex", index + 1);
         dispatch("sendCurrentNumberMessage");
       }
     },
-    sendCurrentNumberMessage({ dispatch, state }) {
-      let current_number = state.sending_numbers[state.current_number_index];
-      dispatch("sendCurrentMessage", current_number);
+    sendCurrentNumberMessage({ dispatch, getters }) {
+      let index = getters.getCurrentNumberIndex;
+      let number = getters.getSendingNumbers[index];
+      dispatch("sendCurrentMessage", number);
     },
-    sendMessageFromNumber({ dispatch, commit, state }) {
+    sendMessageFromNumber({ dispatch, state }) {
       const { numbers, message } = state;
       if (!message || !numbers) {
         throw new validationException(
           "Por favor, preencha os campo de mensagem número de telefone"
         );
       }
-
-      commit("setSendingNumbers", removeArrayDuplicates(numbers.split(",")));
       dispatch("sendCurrentNumberMessage");
     },
     sendMessageFromSheet() {

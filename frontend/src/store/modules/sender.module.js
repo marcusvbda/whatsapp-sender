@@ -90,6 +90,7 @@ export default {
     sendCurrentNumberMessage({ dispatch, commit, getters }) {
       let index = getters.getCurrentNumberIndex;
       let number = getters.getSendingNumbers[index];
+      commit("setSendingState", "play");
       commit("setShowResult", false);
       dispatch("sendCurrentMessage", number);
     },

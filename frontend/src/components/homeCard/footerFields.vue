@@ -20,7 +20,7 @@
       </div>
     </div>
     <div class="--obs-row">
-      O envio das mensagens poderá ser pausado ou paralisado a qualquer momento.
+      O envio das mensagens poderá ser pausado ou finalizado a qualquer momento.
     </div>
   </div>
 </template>

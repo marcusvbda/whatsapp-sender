@@ -1,4 +1,5 @@
 const venom = require("venom-bot");
+const debug = require("console-development");
 
 const bot = {
   async start(eventEmitter, params) {
@@ -54,7 +55,7 @@ const bot = {
 
       return client;
     } catch (er) {
-      console.log(er);
+      debug.log(er);
     }
   },
 };

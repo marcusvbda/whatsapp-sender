@@ -2838,6 +2838,11 @@ console-browserify@^1.1.0:
   resolved "https://registry.yarnpkg.com/console-browserify/-/console-browserify-1.2.0.tgz#67063cef57ceb6cf4993a2ab3a55840ae8c49336"
   integrity sha512-ZMkYO/LkF17QvCPqM0gxw8yUzigAOZOSWSHg91FH6orS7vcEj5dVZTidN2fQ14yBSdg97RqhSNwLUXInd52OTA==
 
+console-development@^1.0.1:
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/console-development/-/console-development-1.0.1.tgz#58207cb4027cbff0fac8f361284b40e2a2b071ba"
+  integrity sha512-N8uvGP/fyZHtEKV6xnLm4D6HHyHcj/eITIOc2vtRshNvrP012ORoX7QCELWIpkYS7dIqIofIg+32oVCNjRJhJA==
+
 consolidate@^0.15.1:
   version "0.15.1"
   resolved "https://registry.yarnpkg.com/consolidate/-/consolidate-0.15.1.tgz#21ab043235c71a07d45d9aad98593b0dba56bab7"

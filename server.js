@@ -10,6 +10,7 @@ const path = process.cwd();
 const distPath = `${path}/frontend/dist`;
 const EventEmitter = require("events");
 const sessions = {};
+const debug = require("console-development");
 
 const io = require("socket.io")(http, {
   allowEIO3: true,
@@ -31,7 +32,7 @@ app.get("/", (req, res) => {
 
 const port = 3000;
 http.listen(port, () => {
-  console.log(`listening on http://localhost:${port}`);
+  debug.log(`listening on http://localhost:${port}`);
 });
 
 io.sockets.on("connection", (socket) => {

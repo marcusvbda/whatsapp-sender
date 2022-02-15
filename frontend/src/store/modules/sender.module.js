@@ -1,5 +1,6 @@
 import { sleep, validationException } from "@/libs/helpers";
 import { sweetalert } from "@/libs/sweetalert";
+const debug = require("console-development");
 
 export default {
   namespaced: true,
@@ -81,7 +82,7 @@ export default {
     async sendEngineMessage({ commit, getters }, number) {
       // emula demora envio
       if (number) {
-        console.log("ENVIANDO", number, getters.getMessage);
+        debug.log("ENVIANDO", number, getters.getMessage);
         let sent_messages = getters.getSentMessage;
         commit("setSentMessages", sent_messages.concat([number]));
         return sleep(500);

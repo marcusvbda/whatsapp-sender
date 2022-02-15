@@ -1,15 +1,8 @@
 import io from "socket.io-client";
-
-const debug = (...args) => {
-  if (isDevelopment) {
-    console.log(args);
-  }
-};
-
-const isDevelopment = process.env.NODE_ENV !== "production";
+const debug = require("console-development");
 
 const handlerDisconnect = (commit) => {
-  debug("disconnect");
+  debug.log("disconnect");
   commit("setConnectionId", null);
   commit("setCurrentAction", "loading");
   setTimeout(() => {
@@ -31,7 +24,7 @@ export const initSocket = async ({ state, commit }) => {
   });
 
   socket.on("session-updated", (data) => {
-    debug("session-updated", data);
+    debug.log("session-updated", data);
     const actions = {
       notLogged: () => {
         commit("setLogged", false);
@@ -52,27 +45,27 @@ export const initSocket = async ({ state, commit }) => {
   });
 
   socket.on("qr-generated", (data) => {
-    debug("qr-generated", data);
+    debug.log("qr-generated", data);
     commit("setQrCodeImage", data.base64Qrimg);
     commit("setQrCodeIsLoading", false);
   });
 
   socket.on("state-change", (event, data) => {
-    debug("state-change", event, data);
+    debug.log("state-change", event, data);
   });
 
   socket.on("token-generated", (data) => {
-    debug("token-generated", data);
+    debug.log("token-generated", data);
     commit("setToken", data);
     commit("setCurrentAction", "home");
   });
 
   socket.on("session-conflict", (data) => {
-    debug("session-conflict", data);
+    debug.log("session-conflict", data);
   });
 
   socket.on("connected", (data) => {
-    debug("connected", data);
+    debug.log("connected", data);
     commit("setConnectionId", data.id);
   });
 

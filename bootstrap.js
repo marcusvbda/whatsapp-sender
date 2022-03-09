@@ -9,21 +9,9 @@ const cors = require('cors');
 
 app.use(cors());
 const bodyParser = require('body-parser');
-
-const isProduction = process.env.NODE_ENV === 'production';
-const path = process.cwd();
-const distPath = `${path}/frontend/dist`;
 const debug = require('console-development');
-// const DBConn = require('./src/utils/connector');
-
-// DBConn.connect();
-// const SessionModel = require('./src/models/session.model');
 
 app.use(bodyParser.json());
-
-if (isProduction) {
-  app.use(express.static(distPath));
-}
 
 app.get('/', (req, res) => {
   res.json('api is running ...');
@@ -35,10 +23,7 @@ http.listen(port, () => {
   debug.log(`listening on ${uri}:${port}`);
 });
 
-// app.get('/test-mongo', async (req, res) => {
-//   const list = await SessionModel.find({});
-//   res.json(list);
-// });
+const isProduction = process.env.NODE_ENV === 'production';
 
 module.exports = {
   app,

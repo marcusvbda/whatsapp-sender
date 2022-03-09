@@ -6,9 +6,8 @@ export default {
   namespaced: true,
   state() {
     return {
-      numbers:
-        "14996766177,14996766177,14999999999,2121212121,2121213413,21212134141,2121413221,21314123123,123123123123,21212131,1212121231231,21212121",
-      message: "teste 123",
+      numbers: "",
+      message: "",
       tab: 0,
       sending: false,
       show_result: false,

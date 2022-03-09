@@ -1,10 +1,10 @@
-const venom = require("venom-bot");
-const debug = require("console-development");
+const venom = require('venom-bot');
+const debug = require('console-development');
 
 const bot = {
   async start(eventEmitter, params) {
     const qrGeneratedHandler = (base64Qrimg, asciiQR, attempts, urlCode) => {
-      eventEmitter.emit("qr-generated", {
+      eventEmitter.emit('qr-generated', {
         base64Qrimg,
         asciiQR,
         attempts,
@@ -13,10 +13,10 @@ const bot = {
     };
 
     const sessionHandler = (statusSession, session) => {
-      if (["browserClose", "autocloseCalled"].includes(statusSession)) {
-        eventEmitter.emit("browser-close", session);
+      if (['browserClose', 'autocloseCalled'].includes(statusSession)) {
+        eventEmitter.emit('browser-close', session);
       } else {
-        eventEmitter.emit("session-updated", { statusSession, session });
+        eventEmitter.emit('session-updated', { statusSession, session });
       }
     };
 
@@ -33,29 +33,33 @@ const bot = {
     };
 
     try {
-      let client = await venom.create(
-        params.session_id,
+      const client = await venom.create(
+        params.code,
         qrGeneratedHandler,
         sessionHandler,
         settings,
-        params.token
+        params,
       );
 
       client.getSessionTokenBrowser().then((token) => {
-        eventEmitter.emit("token-generated", { token });
+        eventEmitter.emit('token-generated', { token });
       });
 
       client.onStateChange((state) => {
-        eventEmitter("state-change", state);
+        eventEmitter('state-change', state);
       });
 
       client.onIncomingCall(async (call) => {
-        eventEmitter.emit("incoming-call", { from: call.peerJid });
+        eventEmitter.emit('incoming-call', { from: call.peerJid });
+      });
+
+      client.onMessage(async (message) => {
+        eventEmitter.emit('message-received', message);
       });
 
       return client;
     } catch (er) {
-      debug.log(er);
+      return debug.log(er);
     }
   },
 };

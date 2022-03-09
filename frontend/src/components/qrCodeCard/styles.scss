@@ -20,6 +20,10 @@
         .--qrcode-skeleton {
           @apply h-full w-auto bg-gray-300 rounded animate-pulse; 
         }
+
+        .--qr-content {
+          @apply bg-white p-2;
+        }
       }
     }
   }

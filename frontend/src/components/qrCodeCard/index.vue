@@ -24,7 +24,9 @@
       <div class="--right">
         <div class="container h-full">
           <div class="--qrcode-skeleton" v-if="qrCodeIsLoading" />
-          <img v-else :src="qrCodeImage" />
+          <div v-else class="--qr-content">
+            <img :src="qrCodeImage" />
+          </div>
         </div>
       </div>
     </template>

@@ -70,5 +70,6 @@ export const initSocket = async ({ state, commit }) => {
   });
 
   socket.on("disconnect", () => handlerDisconnect(commit));
+
   socket.on("browser-close", () => handlerDisconnect(commit));
 };

@@ -1,6 +1,6 @@
 const EventEmitter = require('events');
 const SocketIo = require('socket.io');
-const { app, http, isProduction } = require('./bootstrap');
+const { app, http } = require('./bootstrap');
 const botEngine = require('./src/libs/bot-engine');
 
 const sessions = {};
@@ -52,7 +52,7 @@ app.post('/sessions/login', async (req, res) => {
 
   botEngine.start(eventEmitter, {
     ...params,
-    headless: isProduction,
+    headless: true,
     socket_id: null,
   }).then((client) => {
     sessions[params.code] = client;
@@ -110,7 +110,7 @@ io.sockets.on('connection', (socket) => {
       botEngine
         .start(eventEmitter, {
           ...params,
-          headless: isProduction,
+          headless: true,
           socket_id: socket.id,
         })
         .then((client) => {

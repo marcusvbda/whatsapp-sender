@@ -60,6 +60,32 @@ app.post('/sessions/login', async (req, res) => {
   res.json({});
 });
 
+const handleSendMessage = async (params) => {
+  const isConnected = await sessionIsConnected(params.session_code);
+  if (isConnected) {
+    const client = sessions[params.session_code];
+    const actions = {
+      text: () => client.sendText(params.to, params.message),
+    };
+    try {
+      if (actions[params.type]) {
+        const result = await actions[params.type]();
+        return { event: 'message-sent', data: { message: params, result } };
+      }
+      return { event: 'message-failed', data: { message: params, error: `type ${params.type} not found` } };
+    } catch (er) {
+      return { event: 'message-failed', data: { message: params, error: er } };
+    }
+  }
+  return false;
+};
+
+app.post('/sessions/send-direct-message', async (req, res) => {
+  const params = req.body;
+  const response = await await handleSendMessage(params);
+  res.json(response);
+});
+
 const io = SocketIo(http, {
   allowEIO3: true,
   cors: {
@@ -94,23 +120,8 @@ io.sockets.on('connection', (socket) => {
   });
 
   socket.on('send-message', async (params) => {
-    const isConnected = await sessionIsConnected(params.session_code);
-    if (isConnected) {
-      const client = sessions[params.session_code];
-      const actions = {
-        text: () => client.sendText(params.to, params.message),
-      };
-      try {
-        if (actions[params.type]) {
-          const result = await actions[params.type]();
-          socket.emit('message-sent', { message: params, result });
-        } else {
-          socket.emit('message-failed', { message: params, error: `type ${params.type} not found` });
-        }
-      } catch (er) {
-        socket.emit('message-failed', { message: params, error: er });
-      }
-    }
+    const response = await await handleSendMessage(params);
+    socket.emit(response.type, response.data);
   });
 
   [

@@ -4,19 +4,23 @@ const debug = require('console-development');
 const bot = {
   async start(eventEmitter, params) {
     const qrGeneratedHandler = (base64Qrimg, asciiQR, attempts, urlCode) => {
-      eventEmitter.emit('qr-generated', {
-        base64Qrimg,
-        asciiQR,
-        attempts,
-        urlCode,
-      });
+      if (eventEmitter) {
+        eventEmitter.emit('qr-generated', {
+          base64Qrimg,
+          asciiQR,
+          attempts,
+          urlCode,
+        });
+      }
     };
 
     const sessionHandler = (statusSession, session) => {
-      if (['browserClose', 'autocloseCalled'].includes(statusSession)) {
-        eventEmitter.emit('browser-close', session);
-      } else {
-        eventEmitter.emit('session-updated', { statusSession, session });
+      if (eventEmitter) {
+        if (['browserClose', 'autocloseCalled'].includes(statusSession)) {
+          eventEmitter.emit('browser-close', session);
+        } else {
+          eventEmitter.emit('session-updated', { statusSession, session });
+        }
       }
     };
 
@@ -41,21 +45,23 @@ const bot = {
         params,
       );
 
-      client.getSessionTokenBrowser().then((token) => {
-        eventEmitter.emit('token-generated', { token });
-      });
+      if (eventEmitter) {
+        client.getSessionTokenBrowser().then((token) => {
+          eventEmitter.emit('token-generated', { token });
+        });
 
-      client.onStateChange((state) => {
-        eventEmitter('state-change', state);
-      });
+        client.onStateChange((state) => {
+          eventEmitter('state-change', state);
+        });
 
-      client.onIncomingCall(async (call) => {
-        eventEmitter.emit('incoming-call', { from: call.peerJid });
-      });
+        client.onIncomingCall(async (call) => {
+          eventEmitter.emit('incoming-call', { from: call.peerJid });
+        });
 
-      client.onMessage(async (message) => {
-        eventEmitter.emit('message-received', message);
-      });
+        client.onMessage(async (message) => {
+          eventEmitter.emit('message-received', message);
+        });
+      }
 
       return client;
     } catch (er) {

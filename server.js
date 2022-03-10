@@ -46,6 +46,20 @@ app.get('/sessions/get-status/:code', async (req, res) => {
   res.json(sessionStatuses[code] ?? 'disconnected');
 });
 
+app.post('/sessions/login', async (req, res) => {
+  const params = req.body;
+  const eventEmitter = new EventEmitter();
+
+  botEngine.start(eventEmitter, {
+    ...params,
+    headless: isProduction,
+    socket_id: null,
+  }).then((client) => {
+    sessions[params.code] = client;
+  });
+  res.json({});
+});
+
 const io = SocketIo(http, {
   allowEIO3: true,
   cors: {

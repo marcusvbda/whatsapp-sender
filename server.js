@@ -15,6 +15,7 @@ const eventList = [
   'auth_failure',
   'ready',
   'message',
+  'sent_message',
 ];
 
 // actions
@@ -40,14 +41,22 @@ const setSessions = (code, client, socket = null) => {
   }
 };
 
-const initClientSession = (code, socket = null) => {
-  debug.log('start engine', code);
-  const localAuth = new LocalAuth({ clientId: code });
-  const client = new Client({
-    authStrategy: localAuth,
-    puppeteer: { headless: isHeadless },
-  });
-  setSessions(code, client, socket);
+const initClientSession = async (code, socket = null) => {
+  const isConnected = await sessionIsConnected(code);
+  debug.log('start engine', code, isConnected);
+
+  let client = null;
+  if (isConnected) {
+    client = sessions[code];
+    ['authenticated', 'ready'].forEach((event) => socket.emit(event));
+  } else {
+    const localAuth = new LocalAuth({ clientId: code });
+    client = new Client({
+      authStrategy: localAuth,
+      puppeteer: { headless: isHeadless },
+    });
+    client.initialize();
+  }
 
   eventList.forEach((event) => {
     client.on(event, (data) => {
@@ -58,7 +67,7 @@ const initClientSession = (code, socket = null) => {
     });
   });
 
-  client.initialize();
+  setSessions(code, client, socket);
 };
 
 // socket
@@ -71,10 +80,31 @@ const io = SocketIo(http, {
 });
 
 io.sockets.on('connection', (socket) => {
-  socket.emit('connected', { id: socket.id, events: eventList });
+  socket.emit('connected', { id: socket.id });
 
-  socket.on('start-engine', async (code) => {
+  socket.on('start-engine', (code) => {
     initClientSession(code, socket);
+  });
+
+  socket.on('message', async (params) => {
+    debug.log('message', params);
+    const {
+      code, number, type, message, _uid,
+    } = params;
+
+    const client = sessions[code];
+    const actions = {
+      text: async () => {
+        const numberId = number.includes('@c.us') ? number : `${number}@c.us`;
+        // VERIFICAR SE O TEL EXISTE ANTES DE ENVIAR
+        const sentMessage = await client.sendMessage(numberId, message);
+        debug.log('sent message', sentMessage);
+        socket.emit('sent_message', { ...sentMessage, _uid });
+      },
+    };
+
+    const result = actions[type] && await actions[type]();
+    return result;
   });
 });
 

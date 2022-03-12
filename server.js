@@ -1,10 +1,15 @@
 const EventEmitter = require('events');
 const SocketIo = require('socket.io');
+const debug = require('console-development');
 const { app, http } = require('./bootstrap');
 const botEngine = require('./src/libs/bot-engine');
 
+const isHeadless = false;
+const KeepAliveInterval = 5000;
+
 const sessions = {};
 
+// actions
 const getSessionStatuses = async () => {
   const sessionStatuses = {};
   const keys = Object.keys(sessions);
@@ -35,31 +40,6 @@ const sessionIsConnected = async (code) => {
   }
 };
 
-app.get('/sessions', async (req, res) => {
-  const sessionStatuses = await getSessionStatuses();
-  res.json(sessionStatuses);
-});
-
-app.get('/sessions/get-status/:code', async (req, res) => {
-  const sessionStatuses = await getSessionStatuses();
-  const { code } = req.params;
-  res.json(sessionStatuses[code] ?? 'disconnected');
-});
-
-app.post('/sessions/login', async (req, res) => {
-  const params = req.body;
-  const eventEmitter = new EventEmitter();
-
-  botEngine.start(eventEmitter, {
-    ...params,
-    headless: true,
-    socket_id: null,
-  }).then((client) => {
-    sessions[params.code] = client;
-  });
-  res.json({});
-});
-
 const handleSendMessage = async (params) => {
   const isConnected = await sessionIsConnected(params.session_code);
   if (isConnected) {
@@ -80,12 +60,38 @@ const handleSendMessage = async (params) => {
   return false;
 };
 
-app.post('/sessions/send-direct-message', async (req, res) => {
-  const params = req.body;
-  const response = await await handleSendMessage(params);
-  res.json(response);
-});
+const sessionSocket = (type, code, event, data) => {
+  if (sessions[code].socket) {
+    sessions[code].socket[type](event, data);
+  }
+};
 
+const destroySession = (code) => {
+  sessionSocket('emit', code, 'keep-alive', false);
+  clearInterval(sessions[code].keep_alive);
+  delete sessions[code];
+};
+
+const keepSessionAlive = (code) => {
+  sessions[code].keep_alive = setInterval(async () => {
+    const isConnected = await sessionIsConnected(code);
+    debug.log('keep session alive', code, isConnected);
+    if (!isConnected) {
+      destroySession(code);
+    } else {
+      sessionSocket('emit', code, 'keep-alive', true);
+    }
+  }, KeepAliveInterval);
+};
+
+const setSessions = (code, client, socket = null) => {
+  debug.log('set session', code);
+  sessions[code] = client;
+  sessions[code].socket = socket;
+  keepSessionAlive(code);
+};
+
+// socket
 const io = SocketIo(http, {
   allowEIO3: true,
   cors: {
@@ -110,11 +116,11 @@ io.sockets.on('connection', (socket) => {
       botEngine
         .start(eventEmitter, {
           ...params,
-          headless: true,
+          headless: isHeadless,
           socket_id: socket.id,
         })
         .then((client) => {
-          sessions[params.code] = client;
+          setSessions(params.code, client, socket);
         });
     }
   });
@@ -137,6 +143,40 @@ io.sockets.on('connection', (socket) => {
 
   eventEmitter.on('browser-close', (session) => {
     socket.emit('browser-close', session);
-    delete sessions[session];
+    destroySession(session);
   });
+});
+
+// routes
+app.get('/sessions', async (req, res) => {
+  const sessionStatuses = await getSessionStatuses();
+  res.json(sessionStatuses);
+});
+
+app.get('/sessions/get-status/:code', async (req, res) => {
+  const { code } = req.params;
+  debug.log('get session status', code);
+  const sessionStatus = await sessionIsConnected(code);
+  res.json(sessionStatus ? 'connected' : 'disconnected');
+});
+
+app.post('/sessions/login', async (req, res) => {
+  debug.log('session login');
+  const params = req.body;
+  const eventEmitter = new EventEmitter();
+
+  botEngine.start(eventEmitter, {
+    ...params,
+    headless: isHeadless,
+    socket_id: null,
+  }).then((client) => {
+    setSessions(params.code, client);
+  });
+  res.json({});
+});
+
+app.post('/sessions/send-direct-message', async (req, res) => {
+  const params = req.body;
+  const response = await await handleSendMessage(params);
+  res.json(response);
 });

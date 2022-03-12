@@ -96,10 +96,13 @@ io.sockets.on('connection', (socket) => {
     const actions = {
       text: async () => {
         const numberId = number.includes('@c.us') ? number : `${number}@c.us`;
-        // VERIFICAR SE O TEL EXISTE ANTES DE ENVIAR
+        const contact = await client.getContactById(numberId);
+
         const sentMessage = await client.sendMessage(numberId, message);
+        const payload = { message: sentMessage, _uid, contact };
+
         debug.log('sent message', sentMessage);
-        socket.emit('sent_message', { ...sentMessage, _uid });
+        socket.emit('sent_message', payload);
       },
     };
 

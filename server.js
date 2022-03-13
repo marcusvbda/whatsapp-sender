@@ -1,6 +1,7 @@
 const SocketIo = require('socket.io');
 const debug = require('console-development');
 const { LocalAuth, Client } = require('whatsapp-web.js');
+const axios = require('axios').default;
 const { app, http } = require('./bootstrap');
 
 const isHeadless = false;
@@ -68,6 +69,36 @@ const initClientSession = async (code, socket = null) => {
   });
 
   setSessions(code, client, socket);
+  return { client, socket };
+};
+
+const handleSendMessage = async (params, socket = null) => {
+  debug.log('message', params);
+  const {
+    code, number, type, message, _uid,
+  } = params;
+
+  const client = sessions[code];
+  const actions = {
+    text: async () => {
+      const numberId = number.includes('@c.us') ? number : `${number}@c.us`;
+      const contact = await client.getContactById(numberId);
+
+      const sentMessage = await client.sendMessage(numberId, message);
+      const payload = {
+        message: sentMessage, code, _uid, contact,
+      };
+
+      debug.log('sent message', sentMessage);
+      if (socket) {
+        socket.emit('sent_message', payload);
+      }
+      return payload;
+    },
+  };
+
+  const result = actions[type] && await actions[type]();
+  return result;
 };
 
 // socket
@@ -87,26 +118,7 @@ io.sockets.on('connection', (socket) => {
   });
 
   socket.on('message', async (params) => {
-    debug.log('message', params);
-    const {
-      code, number, type, message, _uid,
-    } = params;
-
-    const client = sessions[code];
-    const actions = {
-      text: async () => {
-        const numberId = number.includes('@c.us') ? number : `${number}@c.us`;
-        const contact = await client.getContactById(numberId);
-
-        const sentMessage = await client.sendMessage(numberId, message);
-        const payload = { message: sentMessage, _uid, contact };
-
-        debug.log('sent message', sentMessage);
-        socket.emit('sent_message', payload);
-      },
-    };
-
-    const result = actions[type] && await actions[type]();
+    const result = await handleSendMessage(params, socket);
     return result;
   });
 });
@@ -121,4 +133,28 @@ app.get('/sessions/:code/check-status', async (req, res) => {
   debug.log('get session status', code);
   const isConnected = await sessionIsConnected(code);
   res.json(isConnected ? 'connected' : 'disconnected');
+});
+
+app.post('/postback-mockup', async (req, res) => {
+  const params = req.body;
+  debug.log('postback mockup', params);
+  res.json(params);
+});
+
+app.post('/send-message', async (req, res) => {
+  const params = req.body;
+  const { code, _uid, postback } = params;
+  const isConnected = await sessionIsConnected(code);
+  if (!isConnected) {
+    const { client } = await initClientSession(code);
+    client.on('ready', async () => {
+      axios.post(postback, { code, _uid, status: 'ready' });
+
+      const messageResult = await handleSendMessage(params);
+      axios.post(postback, { ...messageResult, status: 'sent-message' });
+    });
+    return res.json({ code, _uid, status: 'processing' });
+  }
+  const messageResult = await handleSendMessage(params);
+  return res.json({ ...messageResult, status: 'sent-message' });
 });

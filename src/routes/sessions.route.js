@@ -2,7 +2,7 @@ const express = require('express');
 const debug = require('console-development');
 
 const router = express.Router();
-const wppEngine = require('../engines/wpp.engine');
+const wppEngine = require('@src/engines/wpp.engine');
 
 router.get('/', async (req, res) => {
   res.json(Object.keys(wppEngine.getSession()));

@@ -16,6 +16,7 @@ module.exports = {
     'no-param-reassign': 'off',
     'no-return-assign': 'off',
     'import/extensions': 'off',
+    'import/no-unresolved': 'off',
   },
   overrides: [
     {

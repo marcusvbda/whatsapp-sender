@@ -2,7 +2,7 @@ const express = require('express');
 const axios = require('axios').default;
 
 const router = express.Router();
-const wppEngine = require('../engines/wpp.engine');
+const wppEngine = require('@src/engines/wpp.engine');
 
 router.post('/send', async (req, res) => {
   const params = req.body;

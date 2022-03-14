@@ -1,10 +1,18 @@
 require('dotenv').config({
   path: process.env.NODE_ENV === 'production' ? '.env' : `.env.${process.env.NODE_ENV}`,
 });
+require('module-alias').addAliases({
+  '~': __dirname,
+  '@src': `${__dirname}/src`,
+});
+
 const SocketIo = require('socket.io');
-const verifyJWT = require('./src/middlewares/jwt.middleware');
+const verifyJWT = require('@src/middlewares/jwt.middleware');
+const wppEngine = require('@src/engines/wpp.engine');
+const DBConn = require('@src/utils/connector.util');
 const { app, http } = require('./bootstrap');
-const wppEngine = require('./src/engines/wpp.engine');
+
+DBConn.connect();
 
 const io = SocketIo(http, {
   allowEIO3: true,

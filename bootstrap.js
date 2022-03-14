@@ -7,9 +7,6 @@ const cors = require('cors');
 app.use(cors());
 const bodyParser = require('body-parser');
 const debug = require('console-development');
-const DBConn = require('./src/utils/connector.util');
-
-DBConn.connect();
 
 app.use(bodyParser.json());
 

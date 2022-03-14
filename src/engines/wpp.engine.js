@@ -1,20 +1,18 @@
 const debug = require('console-development');
 const { LocalAuth, Client } = require('whatsapp-web.js');
 
-const isHeadless = false;
-
-const eventList = [
-  'auth_failure',
-  'disconnected',
-  'qr',
-  'authenticated',
-  'auth_failure',
-  'ready',
-  'message',
-  'sent_message',
-];
-
 const engineWpp = {
+  isHeadless: false,
+  eventList: [
+    'auth_failure',
+    'disconnected',
+    'qr',
+    'authenticated',
+    'auth_failure',
+    'ready',
+    'message',
+    'sent_message',
+  ],
   sessions: [],
   getSession(code = null) {
     debug.log('get session', code);
@@ -52,12 +50,12 @@ const engineWpp = {
       const localAuth = new LocalAuth({ clientId: code });
       client = new Client({
         authStrategy: localAuth,
-        puppeteer: { headless: isHeadless },
+        puppeteer: { headless: this.isHeadless },
       });
       client.initialize();
     }
 
-    eventList.forEach((event) => {
+    this.eventList.forEach((event) => {
       client.on(event, (data) => {
         debug.log(event, data);
         if (socket) {

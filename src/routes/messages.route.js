@@ -23,3 +23,5 @@ router.post('/send', async (req, res) => {
 });
 
 module.exports = router;
+// eslint-disable-next-line max-len
+// homolog token = eyJhbGciOiJIUzI1NiJ9.NjIyZjQzNTJiOGM3YTI5MTdmYTk1ZTgw.neVUW9vXDIhqb1DiOa8F3tAgNvdiEG7F_yxIyrE8p4g

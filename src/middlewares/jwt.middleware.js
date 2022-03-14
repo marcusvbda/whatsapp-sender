@@ -1,32 +1,32 @@
 const jwt = require('jsonwebtoken');
+const UserModel = require('../models/user.model');
 
 const verifyJWT = (req, res, next) => {
   const token = req.headers.authorization;
-  if (!token) res.sendStatus(403);
+  if (!token) {
+    return res.sendStatus(403);
+  }
+
   const splited = token.split(' ');
   if (splited[0].trim().toLowerCase() !== 'bearer') {
-    res.sendStatus(403);
+    return res.sendStatus(403);
   }
+
   if (!splited[1]) {
-    res.sendStatus(403);
+    return res.sendStatus(403);
   }
+
   try {
-    jwt.verify(splited[1], process.env.SECRET_KEY, (er, decoded) => {
-      if (er) res.sendStatus(403);
-      if (decoded.secret !== process.env.SECRET_KEY) {
-        res.sendStatus(403);
-      }
-      req.user = decoded;
-      next();
-    });
+    const decoded = jwt.verify(splited[1], process.env.PRIVATE_KEY);
+    const user = UserModel.findById(decoded);
+    if (!user) {
+      return res.sendStatus(403);
+    }
+    req.user = user;
+    return next();
   } catch (er) {
-    res.sendStatus(403);
+    return res.sendStatus(403);
   }
 };
 
-const createToken = (user) => jwt.sign(user, process.env.SECRET_KEY);
-
-module.exports = {
-  verifyJWT,
-  createToken,
-};
+module.exports = verifyJWT;

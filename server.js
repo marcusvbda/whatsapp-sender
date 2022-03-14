@@ -2,10 +2,10 @@ require('dotenv').config({
   path: process.env.NODE_ENV === 'production' ? '.env' : `.env.${process.env.NODE_ENV}`,
 });
 const SocketIo = require('socket.io');
+const verifyJWT = require('./src/middlewares/jwt.middleware');
 const { app, http } = require('./bootstrap');
 const wppEngine = require('./src/engines/wpp.engine');
 
-// socket
 const io = SocketIo(http, {
   allowEIO3: true,
   cors: {
@@ -28,4 +28,5 @@ io.sockets.on('connection', (socket) => {
 });
 
 app.use('/sessions', require('./src/routes/sessions.route'));
-app.use('/messages', require('./src/routes/messages.route'));
+app.use('/auth', require('./src/routes/auth.route'));
+app.use('/messages', verifyJWT, require('./src/routes/messages.route'));

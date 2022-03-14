@@ -1,6 +1,3 @@
-require('dotenv').config({
-  path: process.env.NODE_ENV === 'production' ? '.env' : `.env.${process.env.NODE_ENV}`,
-});
 const express = require('express');
 
 const app = express();
@@ -10,7 +7,7 @@ const cors = require('cors');
 app.use(cors());
 const bodyParser = require('body-parser');
 const debug = require('console-development');
-const DBConn = require('./connector.util');
+const DBConn = require('./src/utils/connector.util');
 
 DBConn.connect();
 

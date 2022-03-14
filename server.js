@@ -1,5 +1,8 @@
+require('dotenv').config({
+  path: process.env.NODE_ENV === 'production' ? '.env' : `.env.${process.env.NODE_ENV}`,
+});
 const SocketIo = require('socket.io');
-const { app, http } = require('./src/utils/bootstrap.util');
+const { app, http } = require('./bootstrap');
 const wppEngine = require('./src/engines/wpp.engine');
 
 // socket

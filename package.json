@@ -24,6 +24,8 @@
     "express": "^4.17.2",
     "fs": "^0.0.1-security",
     "http": "^0.0.1-security",
+    "jsonwebtoken": "^8.5.1",
+    "mongoose": "^6.2.6",
     "node-env": "^0.1.6",
     "nodemon": "^2.0.15",
     "socket.io": "^4.4.0",

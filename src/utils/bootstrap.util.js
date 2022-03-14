@@ -10,11 +10,20 @@ const cors = require('cors');
 app.use(cors());
 const bodyParser = require('body-parser');
 const debug = require('console-development');
+const DBConn = require('./connector.util');
+
+DBConn.connect();
 
 app.use(bodyParser.json());
 
 app.get('/', (req, res) => {
   res.json('api is running ...');
+});
+
+app.post('/postback-mockup', async (req, res) => {
+  const params = req.body;
+  debug.log('postback mockup', params);
+  res.json(params);
 });
 
 const port = process.env.APP_PORT;

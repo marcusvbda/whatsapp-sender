@@ -14,13 +14,13 @@ router.post('/login', async (req, res) => {
     const token = await jwt.sign(user.id, process.env.PRIVATE_KEY);
     return res.send({ token });
   }
-  return res.json({ error: 'invalid credentials' }, 403);
+  return res.send({ error: 'invalid credentials' }, 403);
 });
 
 router.post('/encrypt', async (req, res) => {
   const { value } = req.body;
   const hash = bcrypt.hashSync(value, 10);
-  res.json(hash);
+  res.send(hash);
 });
 
 module.exports = router;

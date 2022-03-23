@@ -14,6 +14,12 @@ const engineWpp = {
     'sent_message',
   ],
   sessions: [],
+  deleteSession(code) {
+    debug.log('delete session', code);
+    if (this.sessions[code]) {
+      delete this.sessions[code];
+    }
+  },
   getSession(code = null) {
     debug.log('get session', code);
     return code ? this.sessions[code] : this.sessions;
@@ -62,6 +68,10 @@ const engineWpp = {
           socket.emit(event, data);
         }
       });
+    });
+
+    client.on('disconnect', () => {
+      this.deleteSession(code);
     });
 
     this.setSessions(code, client, socket);

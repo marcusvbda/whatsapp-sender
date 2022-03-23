@@ -16,10 +16,10 @@ router.post('/send', async (req, res) => {
       const messageResult = await wppEngine.handleSendMessage(params);
       axios.post(postback, { ...messageResult, status: 'sent-message' });
     });
-    return res.json({ code, _uid, status: 'processing' });
+    return res.send({ code, _uid, status: 'processing' });
   }
   const messageResult = await wppEngine.handleSendMessage(params);
-  return res.json({ ...messageResult, status: 'sent-message' });
+  return res.send({ ...messageResult, status: 'sent-message' });
 });
 
 module.exports = router;

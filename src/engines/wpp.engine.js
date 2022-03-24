@@ -99,11 +99,12 @@ const engineWpp = {
       const messageResult = await this.handleSendMessage({ ...message, code });
       if (postback) {
         // eslint-disable-next-line no-underscore-dangle
-        const postbackResponse = { ...messageResult, _uid: message._uid, postback_status: 'sent' };
+        const postbackData = { _uid: message._uid, postback_status: 'sent' };
+        const postbackResponse = { ...messageResult, ...postbackData };
         // eslint-disable-next-line no-await-in-loop
         try {
           axios.post(postback, postbackResponse);
-          debug.log('sent postback');
+          debug.log('sent postback', postbackData);
         } catch (error) {
           debug.log('error postback', postbackResponse);
         }

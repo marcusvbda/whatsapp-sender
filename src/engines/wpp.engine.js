@@ -1,5 +1,6 @@
 const debug = require('console-development');
 const { LocalAuth, Client } = require('whatsapp-web.js');
+const axios = require('axios').default;
 
 const engineWpp = {
   isHeadless: false,
@@ -57,13 +58,18 @@ const engineWpp = {
       client = new Client({
         authStrategy: localAuth,
         puppeteer: { headless: this.isHeadless },
+        args: [
+          '--no-sandbox',
+          '--disable-setuid-sandbox',
+          '--disable-extensions',
+        ],
       });
       client.initialize();
     }
 
     this.eventList.forEach((event) => {
       client.on(event, (data) => {
-        debug.log(event, data);
+        // debug.log(event, data);
         if (socket) {
           socket.emit(event, data);
         }
@@ -71,14 +77,45 @@ const engineWpp = {
     });
 
     client.on('disconnect', () => {
+      debug.log('disconnect');
       this.deleteSession(code);
     });
 
     this.setSessions(code, client, socket);
     return { client, socket };
   },
+  randomNumber(min, max) {
+    return Math.random() * (max - min) + min;
+  },
+  async handleSendMessages(messages, code, postback = null) {
+    debug.log('handleSendMessages');
+    const results = [];
+    for (let i = 0; i < messages.length; i += 1) {
+      const timeout = this.randomNumber(500, 1500);
+      // eslint-disable-next-line no-await-in-loop
+      await this.sleep(timeout);
+      const message = messages[i];
+      // eslint-disable-next-line no-await-in-loop
+      const messageResult = await this.handleSendMessage({ ...message, code });
+      if (postback) {
+        // eslint-disable-next-line no-underscore-dangle
+        const postbackResponse = { ...messageResult, _uid: message._uid, postback_status: 'sent-message' };
+        // eslint-disable-next-line no-await-in-loop
+        try {
+          axios.post(postback, postbackResponse);
+        } catch (error) {
+          debug.log('error postback', postbackResponse);
+        }
+      }
+    }
+    return results;
+  },
+  async sleep(timeout) {
+    // eslint-disable-next-line no-promise-executor-return
+    await new Promise((resolve) => setTimeout(resolve, timeout));
+  },
   async handleSendMessage(params, socket = null) {
-    debug.log('message', params);
+    debug.log('handleSendMessage');
     const {
       code, number, type, message, _uid,
     } = params;
@@ -93,8 +130,6 @@ const engineWpp = {
         const payload = {
           message: sentMessage, code, _uid, contact,
         };
-
-        debug.log('sent message', sentMessage);
         if (socket) {
           socket.emit('sent_message', payload);
         }

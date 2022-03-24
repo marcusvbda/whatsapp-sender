@@ -6,7 +6,7 @@ require('module-alias').addAliases({
 });
 
 const SocketIo = require('socket.io');
-const verifyJWT = require('@src/middlewares/jwt.middleware');
+const { Auth } = require('@src/middlewares/auth.middleware');
 const wppEngine = require('@src/engines/wpp.engine');
 const DBConn = require('@src/utils/connector.util');
 const { app, http } = require('./bootstrap');
@@ -36,4 +36,4 @@ io.sockets.on('connection', (socket) => {
 
 app.use('/sessions', require('./src/routes/sessions.route'));
 app.use('/auth', require('./src/routes/auth.route'));
-app.use('/messages', verifyJWT, require('./src/routes/messages.route'));
+app.use('/messages', Auth, require('./src/routes/messages.route'));

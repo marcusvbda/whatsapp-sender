@@ -9,7 +9,6 @@ const SocketIo = require('socket.io');
 const { Auth, checkUser } = require('@src/middlewares/auth.middleware');
 const wppEngine = require('@src/engines/wpp.engine');
 const DBConn = require('@src/utils/connector.util');
-const debug = require('console-development');
 const { app, http } = require('./bootstrap');
 
 DBConn.connect();

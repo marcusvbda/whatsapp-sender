@@ -1,6 +1,7 @@
 const debug = require('console-development');
 const { LocalAuth, Client } = require('whatsapp-web.js');
 const axios = require('axios').default;
+const del = require('del');
 
 const engineWpp = {
   isHeadless: true,
@@ -55,6 +56,9 @@ const engineWpp = {
       ['authenticated', 'ready'].forEach((event) => socket.emit(event));
     } else {
       const localAuth = new LocalAuth({ clientId: code });
+      const cacheFolter = `${__dirname}/../../.wwebjs_auth/session-${code}/Default/Service Worker`;
+      await del(cacheFolter);
+      debug.log(`${cacheFolter} is deleted!`);
       client = new Client({
         authStrategy: localAuth,
         puppeteer: { headless: this.isHeadless },
@@ -99,7 +103,7 @@ const engineWpp = {
       const messageResult = await this.handleSendMessage({ ...message, code });
       if (postback) {
         // eslint-disable-next-line no-underscore-dangle
-        const postbackData = { _uid: message._uid, postback_status: 'sent' };
+        const postbackData = { _uids: [message._uid], postback_status: 'sent' };
         const postbackResponse = { ...messageResult, ...postbackData };
         // eslint-disable-next-line no-await-in-loop
         try {

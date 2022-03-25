@@ -38,7 +38,6 @@ io.sockets.on('connection', async (socket) => {
     socket.emit('error', { message: 'Invalid credentials' });
   }
 });
-
-app.use('/sessions', require('./src/routes/sessions.route'));
 app.use('/auth', require('./src/routes/auth.route'));
+app.use('/sessions', Auth, require('./src/routes/sessions.route'));
 app.use('/messages', Auth, require('./src/routes/messages.route'));

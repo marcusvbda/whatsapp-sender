@@ -1,18 +1,15 @@
 const express = require('express');
 const debug = require('console-development');
+const del = require('del');
 
 const router = express.Router();
-const wppEngine = require('@src/engines/wpp.engine');
 
-router.get('/', async (req, res) => {
-  res.send(Object.keys(wppEngine.getSession()));
-});
-
-router.get('/:code/check-status', async (req, res) => {
+router.delete('/:code', async (req, res) => {
   const { code } = req.params;
-  debug.log('get session status', code);
-  const isConnected = await wppEngine.sessionIsConnected(code);
-  res.send(isConnected ? 'connected' : 'disconnected');
+  const cacheFolter = `${__dirname}/../../.wwebjs_auth/session-${code}`;
+  await del(cacheFolter);
+  debug.log(`${cacheFolter} is deleted!`);
+  res.send(true);
 });
 
 module.exports = router;

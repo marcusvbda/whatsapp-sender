@@ -21,7 +21,8 @@ const io = SocketIo(http, {
 });
 
 io.sockets.on('connection', async (socket) => {
-  const { username, password } = socket.handshake.query;
+  const { token } = socket.handshake.query;
+  const { username, password } = JSON.parse(Buffer.from(token, 'base64').toString());
   const user = await checkUser(username, password);
   if (user) {
     socket.emit('connected', { id: socket.id });

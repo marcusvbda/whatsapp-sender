@@ -78,7 +78,7 @@ const engineWpp = {
 
     this.eventList.forEach((event) => {
       client.on(event, (data) => {
-        // debug.log(event, data);
+        debug.log(event, data);
         if (socket) {
           socket.emit(event, data);
         }

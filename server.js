@@ -28,8 +28,7 @@ io.sockets.on('connection', async (socket) => {
     socket.emit('connected', { id: socket.id });
 
     socket.on('start-engine', (code) => {
-      console.log('start-engine', code);
-      // wppEngine.initClientSession(code, socket);
+      wppEngine.initClientSession(code, socket);
     });
 
     socket.on('message', async (params) => {

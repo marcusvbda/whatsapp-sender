@@ -61,7 +61,12 @@ const engineWpp = {
       debug.log(`${cacheFolter} is deleted!`);
       client = new Client({
         authStrategy: localAuth,
-        puppeteer: { headless: this.isHeadless },
+        puppeteer: {
+          headless: this.isHeadless,
+          args: [
+            '--no-sandbox',
+          ],
+        },
         args: [
           '--no-sandbox',
           '--disable-setuid-sandbox',

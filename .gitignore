@@ -4,3 +4,4 @@
 
 /frontend/.env
 /frontend/node_modules
+/wpp_session/*

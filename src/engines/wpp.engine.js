@@ -4,7 +4,7 @@ const axios = require('axios').default;
 const del = require('del');
 
 const engineWpp = {
-  isHeadless: true,
+  isHeadless: false,
   eventList: [
     'auth_failure',
     'disconnected',
@@ -46,6 +46,9 @@ const engineWpp = {
       return isConnected;
     }
   },
+  getSessionPath() {
+    return `${__dirname}/../../wpp_session`;
+  },
   async initClientSession(code, socket = null) {
     const isConnected = await this.sessionIsConnected(code);
     debug.log('start engine', code, isConnected);
@@ -55,8 +58,9 @@ const engineWpp = {
       client = this.getSessions(code);
       ['authenticated', 'ready'].forEach((event) => socket.emit(event));
     } else {
-      const localAuth = new LocalAuth({ clientId: code });
-      const cacheFolter = `${__dirname}/../../.wwebjs_auth/session-${code}/Default/Service Worker`;
+      const dataPath = this.getSessionPath();
+      const localAuth = new LocalAuth({ clientId: code, dataPath });
+      const cacheFolter = `${dataPath}/session-${code}/Default/Service Worker`;
       await del(cacheFolter);
       debug.log(`${cacheFolter} is deleted!`);
       client = new Client({

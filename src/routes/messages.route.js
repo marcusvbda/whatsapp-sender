@@ -12,7 +12,9 @@ router.post('/send', async (req, res) => {
   const isConnected = await wppEngine.sessionIsConnected(sessionToken);
   if (!isConnected) {
     const { client } = await wppEngine.initClientSession(sessionToken);
+    debug.log('wait ready');
     client.on('ready', () => {
+      debug.log('ready');
       if (postback) {
         const postbackData = { _uids: messagesUids, postback_status: 'sending' };
         try {
@@ -26,6 +28,7 @@ router.post('/send', async (req, res) => {
     });
     return res.send({ messages_uids: messagesUids, status: 'sending' });
   }
+  debug.log('ready connected');
   wppEngine.handleSendMessages(messages, sessionToken, postback);
   return res.send({ messages_uids: messagesUids, status: 'sending' });
 });

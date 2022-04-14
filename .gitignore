@@ -4,5 +4,3 @@
 
 /frontend/.env
 /frontend/node_modules
-
-/.wwebjs_auth/*

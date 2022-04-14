@@ -32,6 +32,6 @@
     "node-env": "^0.1.6",
     "nodemon": "^2.0.15",
     "socket.io": "^4.4.0",
-    "whatsapp-web.js": "^1.16.4"
+    "whatsapp-web.js": "latest"
   }
 }

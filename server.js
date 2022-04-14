@@ -16,17 +16,7 @@ DBConn.connect();
 const io = SocketIo(http, {
   allowEIO3: true,
   cors: {
-    origins: ['*'],
-    handlePreflightRequest: (req, res) => {
-      const headers = {
-        'Access-Control-Allow-Origin': '*',
-        'Access-Control-Allow-Methods': 'GET,POST',
-        'Access-Control-Allow-Headers': 'Content-Type, Authorization',
-        'Access-Control-Allow-Credentials': true,
-      };
-      res.writeHead(200, headers);
-      res.end();
-    },
+    origin: '*',
   },
 });
 

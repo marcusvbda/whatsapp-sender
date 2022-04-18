@@ -4,7 +4,7 @@ const axios = require('axios').default;
 const del = require('del');
 
 const engineWpp = {
-  isHeadless: false,
+  isHeadless: true,
   eventList: [
     'auth_failure',
     'disconnected',

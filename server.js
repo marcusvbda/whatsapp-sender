@@ -33,14 +33,14 @@ io.sockets.on('connection', async (socket) => {
     socket.emit('connected', { id: socket.id });
 
     try {
-      // socket.on('start-engine', (code) => {
-      //   wppEngine.initClientSession(code, socket);
-      // });
+      socket.on('start-engine', (code) => {
+        wppEngine.initClientSession(code, socket);
+      });
 
-      // socket.on('message', async (params) => {
-      //   const result = await wppEngine.handleSendMessage(params, socket);
-      //   return result;
-      // });
+      socket.on('message', async (params) => {
+        const result = await wppEngine.handleSendMessage(params, socket);
+        return result;
+      });
     } catch (error) {
       socket.emit('error', { message: error.message });
     }

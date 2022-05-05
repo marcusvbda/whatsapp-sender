@@ -9,6 +9,7 @@ const SocketIo = require('socket.io');
 const { Auth, checkUser } = require('@src/middlewares/auth.middleware');
 const wppEngine = require('@src/engines/wpp.engine');
 const DBConn = require('@src/utils/connector.util');
+const e = require('cors');
 const { app, http } = require('./bootstrap');
 
 DBConn.connect();
@@ -31,14 +32,18 @@ io.sockets.on('connection', async (socket) => {
   if (user) {
     socket.emit('connected', { id: socket.id });
 
-    socket.on('start-engine', (code) => {
-      wppEngine.initClientSession(code, socket);
-    });
+    try {
+      // socket.on('start-engine', (code) => {
+      //   wppEngine.initClientSession(code, socket);
+      // });
 
-    socket.on('message', async (params) => {
-      const result = await wppEngine.handleSendMessage(params, socket);
-      return result;
-    });
+      // socket.on('message', async (params) => {
+      //   const result = await wppEngine.handleSendMessage(params, socket);
+      //   return result;
+      // });
+    } catch (error) {
+      socket.emit('error', { message: error.message });
+    }
   } else {
     socket.emit('error', { message: 'Invalid credentials' });
   }

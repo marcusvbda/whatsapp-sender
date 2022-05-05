@@ -1,7 +1,6 @@
 const express = require('express');
 
 const app = express();
-const http = require('http').createServer(app);
 const cors = require('cors');
 
 app.use(cors());
@@ -27,6 +26,8 @@ app.post('/postback-mockup', async (req, res) => {
   debug.log('postback mockup', params);
   res.send(params);
 });
+
+const http = require('http').createServer(app);
 
 http.prependListener('request', (req, res) => {
   res.setHeader('Access-Control-Allow-Origin', '*');

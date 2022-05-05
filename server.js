@@ -17,6 +17,7 @@ const io = SocketIo(http, {
   allowEIO3: true,
   cors: {
     origin: '*',
+    methods: ['GET', 'POST'],
   },
 });
 

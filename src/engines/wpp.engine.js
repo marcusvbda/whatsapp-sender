@@ -67,14 +67,13 @@ const engineWpp = {
         authStrategy: localAuth,
         puppeteer: {
           headless: this.isHeadless,
-          args: [
-            '--no-sandbox',
-          ],
         },
         args: [
           '--no-sandbox',
           '--disable-setuid-sandbox',
           '--disable-extensions',
+          '--use-gl=egl',
+          '--disable-setuid-sandbox',
         ],
       });
       client.initialize();

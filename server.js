@@ -16,7 +16,9 @@ DBConn.connect();
 const io = SocketIo(http, {
   allowEIO3: true,
   cors: {
-    origin: '*'
+    origin: '*',
+    methods: ['GET', 'POST'],
+    credentials: true,
   },
 });
 

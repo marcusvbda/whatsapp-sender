@@ -18,6 +18,7 @@ const io = SocketIo(http, {
   cors: {
     origin: '*',
     methods: ['GET', 'POST'],
+    credentials: true,
   },
 });
 

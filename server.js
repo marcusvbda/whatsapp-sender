@@ -15,6 +15,7 @@ DBConn.connect();
 
 const io = SocketIo(http, {
   allowEIO3: true,
+  rejectUnauthorized: false,
   cors: {
     origin(origin, callback) {
       return callback(null, true);

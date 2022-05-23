@@ -5,7 +5,7 @@ const postbacks = require('@src/engines/postbacks.engine');
 const helpers = require('@src/utils/helpers.util');
 
 const engineWpp = {
-  isHeadless: false,
+  isHeadless: true,
   webDriveArgs: [
     '--no-sandbox',
     '--disable-setuid-sandbox',

@@ -1,0 +1,9 @@
+services: 
+  app:
+    container_name: whatsapp-sender
+    restart: unless-stopped
+    tty: true
+    build:
+      context: ./
+    ports:
+      - 3001:3001  

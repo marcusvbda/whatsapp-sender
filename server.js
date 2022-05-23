@@ -5,48 +5,22 @@ require('module-alias').addAliases({
   '@src': `${__dirname}/src`,
 });
 
-const SocketIo = require('socket.io');
-const { Auth, checkUser } = require('@src/middlewares/auth.middleware');
-const wppEngine = require('@src/engines/wpp.engine');
+const { Auth } = require('@src/middlewares/auth.middleware');
 const DBConn = require('@src/utils/connector.util');
-const { app, http } = require('./bootstrap');
+const { app } = require('./bootstrap');
+
+const isDevelopment = (['development', 'test', 'testing'].includes(process.env.NODE_ENV || '')) || false;
 
 DBConn.connect();
 
-const io = SocketIo(http, {
-  allowEIO3: true,
-  rejectUnauthorized: false,
-  cors: {
-    origin(origin, callback) {
-      return callback(null, true);
-    },
-    credentials: true,
-  },
-});
-
-io.sockets.on('connection', async (socket) => {
-  const { token } = socket.handshake.query;
-  const { username, password } = JSON.parse(Buffer.from(token, 'base64').toString());
-  const user = await checkUser(username, password);
-  if (user) {
-    socket.emit('connected', { id: socket.id });
-
-    try {
-      socket.on('start-engine', (code) => {
-        wppEngine.initClientSession(code, socket);
-      });
-
-      socket.on('message', async (params) => {
-        const result = await wppEngine.handleSendMessage(params, socket);
-        return result;
-      });
-    } catch (error) {
-      socket.emit('error', { message: error.message });
-    }
-  } else {
-    socket.emit('error', { message: 'Invalid credentials' });
-  }
-});
 app.use('/auth', require('./src/routes/auth.route'));
 app.use('/sessions', Auth, require('./src/routes/sessions.route'));
 app.use('/messages', Auth, require('./src/routes/messages.route'));
+
+if (isDevelopment) {
+  app.post('/mock-postback', async (req, res) => {
+  // eslint-disable-next-line no-console
+    console.log('received postback', req.body);
+    res.send(req.body);
+  });
+}

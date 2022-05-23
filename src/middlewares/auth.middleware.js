@@ -1,5 +1,6 @@
 const UserModel = require('@src/models/user.model');
 const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
 
 const checkUser = async (username, password) => {
   const user = await UserModel.findOne({ username });
@@ -10,25 +11,18 @@ const checkUser = async (username, password) => {
 };
 
 const Auth = async (req, res, next) => {
-  const b64auth = (req.headers.authorization || '').split(' ')[1] || '';
-  const [username, password] = Buffer.from(b64auth, 'base64').toString().split(':');
-  if (!username) {
-    return res.sendStatus(403);
-  }
-  if (!password) {
-    return res.sendStatus(403);
-  }
-
-  try {
-    const user = await checkUser(username, password);
+  const bearer = (req.headers.authorization || '').split(' ')[1] || '';
+  jwt.verify(bearer, process.env.PRIVATE_KEY, async (err, decoded) => {
+    if (err) {
+      return res.sendStatus(403);
+    }
+    const user = await UserModel.findById(decoded);
     if (!user) {
       return res.sendStatus(403);
     }
     req.user = user;
     return next();
-  } catch (er) {
-    return res.sendStatus(403);
-  }
+  });
 };
 
 module.exports = {

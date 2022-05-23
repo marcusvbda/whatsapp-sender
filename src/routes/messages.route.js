@@ -1,36 +1,40 @@
 const express = require('express');
-const axios = require('axios').default;
-const debug = require('console-development');
+const postbacks = require('@src/engines/postbacks.engine');
 
 const router = express.Router();
 const wppEngine = require('@src/engines/wpp.engine');
 
+// {
+//   "code" : "session-id",
+//   "postback" : "http://localhost:3001/mock-postback",
+//   "messages" : [
+//       {
+//           "_uid" : "44555",
+//           "number" : "5544444444",
+//           "type" : "text",
+//           "message" : "teste 123"
+//       }
+//   ]
+// }
+
 router.post('/send', async (req, res) => {
-  const { messages, session_token: sessionToken, postback } = req.body;
+  const { messages, session_token: code, postback } = req.body;
   // eslint-disable-next-line no-underscore-dangle
   const messagesUids = messages.map((x) => x._uid);
-  const isConnected = await wppEngine.sessionIsConnected(sessionToken);
+
+  const isConnected = await wppEngine.sessionIsConnected(code);
   if (!isConnected) {
-    const { client } = await wppEngine.initClientSession(sessionToken);
-    debug.log('wait ready');
+    const { client } = await wppEngine.initClientSession(code, postback);
+
     client.on('ready', () => {
-      debug.log('ready');
-      if (postback) {
-        const postbackData = { _uids: messagesUids, postback_status: 'sending' };
-        try {
-          axios.post(postback, postbackData);
-          debug.log('sent postback', postbackData);
-        } catch (error) {
-          debug.log('error postback', postbackData);
-        }
-      }
-      wppEngine.handleSendMessages(messages, sessionToken, postback);
+      postbacks.post(postback, { _uids: messagesUids, event: 'sending' });
+      wppEngine.handleSendMessages(messages, code, postback);
     });
-    return res.send({ messages_uids: messagesUids, status: 'sending' });
+    return res.send({ _uids: messagesUids, event: 'sending' });
   }
-  debug.log('ready connected');
-  wppEngine.handleSendMessages(messages, sessionToken, postback);
-  return res.send({ messages_uids: messagesUids, status: 'sending' });
+
+  wppEngine.handleSendMessages(messages, code, postback);
+  return res.send({ _uids: messagesUids, event: 'sending' });
 });
 
 module.exports = router;

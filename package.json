@@ -4,7 +4,7 @@
   "description": "",
   "main": "server.js",
   "scripts": {
-    "start": "NODE_ENV=development node server.js",
+    "start": "node server.js",
     "serve": "NODE_ENV=development  nodemon ./server.js"
   },
   "author": "",
@@ -31,7 +31,7 @@
     "mongoose": "^6.2.6",
     "node-env": "^0.1.6",
     "nodemon": "^2.0.15",
-    "socket.io": "^4.4.0",
+    "uuid": "^8.3.2",
     "whatsapp-web.js": "latest"
   }
 }

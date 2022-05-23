@@ -1,36 +1,34 @@
-const debug = require('console-development');
+// const debug = require('console-development');
 const { LocalAuth, Client } = require('whatsapp-web.js');
-const axios = require('axios').default;
 const del = require('del');
+const postbacks = require('@src/engines/postbacks.engine');
+const helpers = require('@src/utils/helpers.util');
 
 const engineWpp = {
-  isHeadless: true,
-  eventList: [
-    'auth_failure',
-    'disconnected',
-    'qr',
-    'authenticated',
-    'auth_failure',
-    'ready',
-    'message',
-    'sent_message',
+  isHeadless: false,
+  webDriveArgs: [
+    '--no-sandbox',
+    '--disable-setuid-sandbox',
+    '--disable-extensions',
+    '--use-gl=egl',
+    '--disable-setuid-sandbox',
   ],
   sessions: [],
   deleteSession(code) {
-    debug.log('delete session', code);
     if (this.sessions[code]) {
       delete this.sessions[code];
     }
   },
-  getSession(code = null) {
-    debug.log('get session', code);
-    return code ? this.sessions[code] : this.sessions;
+  getSessionsCodes() {
+    return Object.keys(this.sessions);
   },
-  setSessions(code, client, socket = null) {
-    debug.log('set session', code);
+  getSession(code = null) {
+    return code ? this.sessions[code] : false;
+  },
+  setSessions(code, client, postback = null) {
     this.sessions[code] = client;
-    if (socket) {
-      this.sessions[code].socket = socket;
+    if (postback) {
+      this.sessions[code].postback_url = postback;
     }
   },
   async sessionIsConnected(code) {
@@ -49,87 +47,77 @@ const engineWpp = {
   getSessionPath() {
     return `${__dirname}/../../wpp_session`;
   },
-  async initClientSession(code, socket = null) {
+  async deleteCacheFolder(code) {
+    const dataPath = this.getSessionPath();
+    const localAuth = new LocalAuth({ clientId: code, dataPath });
+    const cacheFolder = `${dataPath}/session-${code}/Default/Service Worker`;
+    await del(cacheFolder);
+    return localAuth;
+  },
+
+  async initClientSession(code, postback) {
+    code = code || helpers.createUniqId();
     const isConnected = await this.sessionIsConnected(code);
-    debug.log('start engine', code, isConnected);
 
     let client = null;
     if (isConnected) {
       client = this.getSessions(code);
-      ['authenticated', 'ready'].forEach((event) => socket.emit(event));
+      [
+        'authenticated',
+        'ready',
+      ].forEach((event) => {
+        postbacks.dispatch(postback, { event, code });
+      });
     } else {
-      const dataPath = this.getSessionPath();
-      const localAuth = new LocalAuth({ clientId: code, dataPath });
-      const cacheFolter = `${dataPath}/session-${code}/Default/Service Worker`;
-      await del(cacheFolter);
-      debug.log(`${cacheFolter} is deleted!`);
+      const localAuth = await this.deleteCacheFolder(code);
       client = new Client({
         authStrategy: localAuth,
         puppeteer: {
           headless: this.isHeadless,
         },
-        args: [
-          '--no-sandbox',
-          '--disable-setuid-sandbox',
-          '--disable-extensions',
-          '--use-gl=egl',
-          '--disable-setuid-sandbox',
-        ],
+        args: this.webDriveArgs,
       });
       client.initialize();
     }
 
-    this.eventList.forEach((event) => {
+    [
+      'auth_failure',
+      'disconnected',
+      'qr',
+      'authenticated',
+      'auth_failure',
+      'ready',
+      'message',
+      'sent_message',
+    ].forEach((event) => {
       client.on(event, (data) => {
-        debug.log(event, data);
-        if (socket) {
-          socket.emit(event, data);
-        }
+        postbacks.dispatch(postback, { event, code, data });
       });
     });
 
     client.on('disconnect', () => {
-      debug.log('disconnect');
       this.deleteSession(code);
     });
 
-    this.setSessions(code, client, socket);
-    return { client, socket };
+    this.setSessions(code, client, postback);
+    return { client };
   },
-  randomNumber(min, max) {
-    return Math.random() * (max - min) + min;
-  },
+
   async handleSendMessages(messages, code, postback = null) {
-    debug.log('handleSendMessages');
-    const results = [];
     for (let i = 0; i < messages.length; i += 1) {
-      const timeout = this.randomNumber(500, 1500);
+      const timeout = helpers.randomNumber(500, 1500);
       // eslint-disable-next-line no-await-in-loop
       await this.sleep(timeout);
       const message = messages[i];
       // eslint-disable-next-line no-await-in-loop
-      const messageResult = await this.handleSendMessage({ ...message, code });
-      if (postback) {
-        // eslint-disable-next-line no-underscore-dangle
-        const postbackData = { _uids: [message._uid], postback_status: 'sent' };
-        const postbackResponse = { ...messageResult, ...postbackData };
-        // eslint-disable-next-line no-await-in-loop
-        try {
-          axios.post(postback, postbackResponse);
-          debug.log('sent postback', postbackData);
-        } catch (error) {
-          debug.log('error postback', postbackResponse);
-        }
-      }
+      await this.handleSendMessage({ ...message, code }, postback);
     }
-    return results;
   },
   async sleep(timeout) {
     // eslint-disable-next-line no-promise-executor-return
     await new Promise((resolve) => setTimeout(resolve, timeout));
   },
-  async handleSendMessage(params, socket = null) {
-    debug.log('handleSendMessage');
+  async handleSendMessage(params, postback) {
     const {
       code, number, type, message, _uid,
     } = params;
@@ -144,14 +132,12 @@ const engineWpp = {
         const payload = {
           message: sentMessage, code, _uid, contact,
         };
-        if (socket) {
-          socket.emit('sent_message', payload);
-        }
         return payload;
       },
     };
 
     const result = actions[type] && await actions[type]();
+    postback.dispatch(postback, { event: 'sent', code, result });
     return result;
   },
 };

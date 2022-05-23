@@ -4,8 +4,9 @@ const del = require('del');
 const postbacks = require('@src/engines/postbacks.engine');
 const helpers = require('@src/utils/helpers.util');
 
+const isHeadless = process.env.HEADLESS;
+
 const engineWpp = {
-  isHeadless: true,
   webDriveArgs: [
     '--no-sandbox',
     '--disable-setuid-sandbox',
@@ -73,7 +74,7 @@ const engineWpp = {
       client = new Client({
         authStrategy: localAuth,
         puppeteer: {
-          headless: this.isHeadless,
+          headless: isHeadless === 'true',
         },
         args: this.webDriveArgs,
       });

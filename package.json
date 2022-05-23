@@ -5,7 +5,12 @@
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
-    "serve": "NODE_ENV=development  nodemon --ignore ./wpp_session ./server.js"
+    "serve": "NODE_ENV=development  nodemon ./server.js"
+  },
+  "nodemonConfig": {
+    "ignore": [
+      "wpp_session/*"
+    ]
   },
   "author": "",
   "license": "ISC",

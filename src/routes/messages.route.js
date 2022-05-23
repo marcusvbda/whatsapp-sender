@@ -18,7 +18,7 @@ const wppEngine = require('@src/engines/wpp.engine');
 // }
 
 router.post('/send', async (req, res) => {
-  const { messages, session_token: code, postback } = req.body;
+  const { messages, code, postback } = req.body;
   // eslint-disable-next-line no-underscore-dangle
   const messagesUids = messages.map((x) => x._uid);
 
@@ -27,7 +27,7 @@ router.post('/send', async (req, res) => {
     const { client } = await wppEngine.initClientSession(code, postback);
 
     client.on('ready', () => {
-      postbacks.post(postback, { _uids: messagesUids, event: 'sending' });
+      postbacks.dispatch(postback, { _uids: messagesUids, event: 'sending' });
       wppEngine.handleSendMessages(messages, code, postback);
     });
     return res.send({ _uids: messagesUids, event: 'sending' });

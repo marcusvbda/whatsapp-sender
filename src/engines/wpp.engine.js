@@ -26,11 +26,8 @@ const engineWpp = {
   getSession(code = null) {
     return code ? this.sessions[code] : false;
   },
-  setSessions(code, client, postback = null) {
+  setSessions(code, client) {
     this.sessions[code] = client;
-    if (postback) {
-      this.sessions[code].postback_url = postback;
-    }
   },
   async sessionIsConnected(code) {
     let isConnected = false;
@@ -55,7 +52,6 @@ const engineWpp = {
     await del(cacheFolder);
     return localAuth;
   },
-
   async initClientSession(code, postback) {
     code = code || helpers.createUniqId();
     const isConnected = await this.sessionIsConnected(code);
@@ -88,7 +84,7 @@ const engineWpp = {
       'authenticated',
       'auth_failure',
       'ready',
-      'message',
+      // 'message',
       'sent_message',
     ].forEach((event) => {
       client.on(event, (data) => {
@@ -100,10 +96,9 @@ const engineWpp = {
       this.deleteSession(code);
     });
 
-    this.setSessions(code, client, postback);
+    this.setSessions(code, client);
     return { client };
   },
-
   async handleSendMessages(messages, code, postback = null) {
     for (let i = 0; i < messages.length; i += 1) {
       const timeout = helpers.randomNumber(500, 1500);
@@ -138,7 +133,7 @@ const engineWpp = {
     };
 
     const result = actions[type] && await actions[type]();
-    postback.dispatch(postback, { event: 'sent', code, result });
+    postbacks.dispatch(postback, { event: 'sent', code, result });
     return result;
   },
 };

@@ -3,9 +3,9 @@ const { LocalAuth, Client } = require('whatsapp-web.js');
 const del = require('del');
 const postbacks = require('@src/engines/postbacks.engine');
 const helpers = require('@src/utils/helpers.util');
+const locateChrome = require('locate-chrome');
 
 const isHeadless = process.env.HEADLESS === 'true' || !helpers.isDevelopment();
-const chromiumPath = process.env.CHROMIUM_PATH || 'chromium';
 
 const engineWpp = {
   webDriveArgs: [
@@ -68,6 +68,8 @@ const engineWpp = {
       });
     } else {
       const localAuth = await this.deleteCacheFolder(code);
+      const chromiumPath = await new Promise((resolve) => locateChrome((arg) => resolve(arg)));
+
       client = new Client({
         authStrategy: localAuth,
         puppeteer: {

@@ -1,11 +1,11 @@
 // const debug = require('console-development');
 const { LocalAuth, Client } = require('whatsapp-web.js');
-const chromium = require('chromium');
 const del = require('del');
 const postbacks = require('@src/engines/postbacks.engine');
 const helpers = require('@src/utils/helpers.util');
 
 const isHeadless = process.env.HEADLESS === 'true' || !helpers.isDevelopment();
+const chromiumPath = process.env.CHROMIUM_PATH || 'chromium';
 
 const engineWpp = {
   webDriveArgs: [
@@ -72,7 +72,7 @@ const engineWpp = {
         authStrategy: localAuth,
         puppeteer: {
           headless: isHeadless,
-          executablePath: chromium.path,
+          executablePath: chromiumPath,
           // args: this.webDriveArgs,
           args: ['--disable-gpu',
             '--disable-dev-shm-usage',

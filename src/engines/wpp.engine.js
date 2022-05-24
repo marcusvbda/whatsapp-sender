@@ -3,16 +3,13 @@ const { LocalAuth, Client } = require('whatsapp-web.js');
 const del = require('del');
 const postbacks = require('@src/engines/postbacks.engine');
 const helpers = require('@src/utils/helpers.util');
-const locateChrome = require('locate-chrome');
 
 const isHeadless = process.env.HEADLESS === 'true' || !helpers.isDevelopment();
+const chromiumPath = process.env.CHROMIUM_PATH || 'chromium';
 
 const engineWpp = {
   webDriveArgs: [
     '--no-sandbox',
-    '--disable-setuid-sandbox',
-    '--disable-extensions',
-    '--use-gl=egl',
     '--disable-setuid-sandbox',
   ],
   sessions: [],
@@ -68,22 +65,12 @@ const engineWpp = {
       });
     } else {
       const localAuth = await this.deleteCacheFolder(code);
-      const chromiumPath = await new Promise((resolve) => locateChrome((arg) => resolve(arg)));
-
       client = new Client({
         authStrategy: localAuth,
         puppeteer: {
           headless: isHeadless,
           executablePath: chromiumPath,
-          // args: this.webDriveArgs,
-          args: ['--disable-gpu',
-            '--disable-dev-shm-usage',
-            '--disable-setuid-sandbox',
-            '--no-first-run',
-            '--no-sandbox',
-            '--no-zygote',
-            '--single-process'],
-          ignoreDefaultArgs: ['--disable-extensions'],
+          args: this.webDriveArgs,
           slowMo: 100,
         },
       });

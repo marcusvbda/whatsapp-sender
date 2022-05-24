@@ -7,20 +7,27 @@ require('module-alias').addAliases({
 
 const { Auth } = require('@src/middlewares/auth.middleware');
 const DBConn = require('@src/utils/connector.util');
+const helpers = require('@src/utils/helpers.util');
 const { app } = require('./bootstrap');
+const AuthController = require('./src/routes/auth.route');
+const SessionController = require('./src/routes/sessions.route');
+const MessageController = require('./src/routes/messages.route');
 
-const isDevelopment = (['development', 'test', 'testing'].includes(process.env.NODE_ENV || '')) || false;
+try {
+  DBConn.connect();
 
-DBConn.connect();
+  app.use('/auth', AuthController);
+  app.use('/sessions', Auth, SessionController);
+  app.use('/messages', Auth, MessageController);
 
-app.use('/auth', require('./src/routes/auth.route'));
-app.use('/sessions', Auth, require('./src/routes/sessions.route'));
-app.use('/messages', Auth, require('./src/routes/messages.route'));
-
-if (isDevelopment) {
-  app.post('/mock-postback', async (req, res) => {
+  if (helpers.isDevelopment()) {
+    app.post('/mock-postback', async (req, res) => {
+      // eslint-disable-next-line no-console
+      console.log('received postback', req.body);
+      res.send(req.body);
+    });
+  }
+} catch (err) {
   // eslint-disable-next-line no-console
-    console.log('received postback', req.body);
-    res.send(req.body);
-  });
+  console.log(err);
 }

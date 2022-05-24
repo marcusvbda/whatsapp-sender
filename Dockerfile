@@ -15,6 +15,6 @@ COPY ./ ./
 
 RUN npm install
 
-CMD ["npm","start"]
+# CMD ["npm","start"]
 
 EXPOSE 3001

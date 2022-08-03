@@ -14,7 +14,7 @@ router.post('/create', async (req, res) => {
   const { postback } = req.body;
   const session = wppEngine.getSession(code);
   if (!session) {
-    code = await wppEngine.initClientSession(code, postback);
+    await wppEngine.initClientSession(code, postback);
   }
   res.send(code);
 });

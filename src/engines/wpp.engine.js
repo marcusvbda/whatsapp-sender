@@ -22,7 +22,7 @@ const engineWpp = {
     return Object.keys(this.sessions);
   },
   getSession(code = null) {
-    return code ? this.sessions[code] : false;
+    return code ? (this.sessions[code] ?? false) : false;
   },
   setSessions(code, client) {
     this.sessions[code] = client;
@@ -74,6 +74,7 @@ const engineWpp = {
           slowMo: 100,
         },
       });
+
       client.initialize();
     }
 
@@ -84,7 +85,6 @@ const engineWpp = {
       'authenticated',
       'auth_failure',
       'ready',
-      // 'message',
       'sent_message',
     ].forEach((event) => {
       client.on(event, (data) => {
@@ -96,6 +96,7 @@ const engineWpp = {
       this.deleteSession(code);
     });
 
+    
     this.setSessions(code, client);
     return { client };
   },

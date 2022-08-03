@@ -27,14 +27,14 @@ router.post('/send', async (req, res) => {
     const { client } = await wppEngine.initClientSession(code, postback);
 
     client.on('ready', () => {
-      postbacks.dispatch(postback, { _uids: messagesUids, event: 'sending' });
+      postbacks.dispatch(postback, { _uids: messagesUids, status: 'sending' });
       wppEngine.handleSendMessages(messages, code, postback);
     });
-    return res.send({ _uids: messagesUids, event: 'sending' });
+    return res.send({ _uids: messagesUids, status: 'sending' });
   }
 
   wppEngine.handleSendMessages(messages, code, postback);
-  return res.send({ _uids: messagesUids, event: 'sending' });
+  return res.send({ _uids: messagesUids, status: 'sending' });
 });
 
 module.exports = router;

@@ -9,7 +9,7 @@ const postbacks = {
       return axios.post(url, data);
     } catch (err) {
       // eslint-disable-next-line no-console
-      console.log(err);
+      console.log('ERRO', url);
       return false;
     }
   },

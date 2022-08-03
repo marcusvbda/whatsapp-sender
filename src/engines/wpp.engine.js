@@ -96,7 +96,6 @@ const engineWpp = {
       this.deleteSession(code);
     });
 
-    
     this.setSessions(code, client);
     return { client };
   },
@@ -134,7 +133,9 @@ const engineWpp = {
     };
 
     const result = actions[type] && await actions[type]();
-    postbacks.dispatch(postback, { event: 'sent', code, result });
+    postbacks.dispatch(postback, {
+      _uids: [_uid], status: 'sent', code, result,
+    });
     return result;
   },
 };
